@@ -1,0 +1,27 @@
+.Card{
+    align-items: center;
+    margin: 12rem;
+    font-style:inherit ;
+   border: 1px solid rgb(183, 212, 218);
+   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+   color: rgb(206, 197, 195);
+   
+}
+
+body{
+    /* background-color: rgb(227, 238, 247); */
+     background-image: linear-gradient(to bottom, #b6ecec, #f5dbe8, #166688);
+   
+  
+}
+    
+.input{
+  display: grid;
+  grid-template-columns: 8fr 0fr 0fr;
+  grid-template-rows: 10px  60px ;
+  
+  
+  }
+.input2{
+    margin-left: 19%;
+}
