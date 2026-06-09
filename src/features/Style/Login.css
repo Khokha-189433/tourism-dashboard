@@ -3,26 +3,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: linear-gradient(to bottom, #b6ecec, #f5dbe8, #166688);
+  background-image: linear-gradient(to bottom, #90d3f1, #5aa7e7ee, #052a5c);
+
 }
 
 .login-page .Card {
   align-items: center;
-  margin: 0;
-  padding: 2rem;
+  margin: 0 px;
+  padding: 5px;
   font-style: inherit;
-  border: 1px solid rgb(183, 212, 218);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-  color: rgb(206, 197, 195);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 4px 10px 6px;
+  /* color: rgb(206, 197, 195) !important; */
+  border-radius: 30px !important;
+  
 }
 
-.login-page .input {
+.input {
   display: grid;
   grid-template-columns: 8fr 0fr 0fr;
-  grid-template-rows: 10px  60px ;
-  
-  
-  }
-.input2{
+  grid-template-rows: 10px  80px ;
+  /* color: rgba(25, 33, 39, 0.582) !important ; */
+  } 
+ .input2{
     margin-left: 19%;
+    
+}
+.Card_login{
+  background-image: linear-gradient(to bottom, #e6f3f8, #cde8ffef, #ffffff67) !important;
+  /* color: #f8f8f8; */
+  border-radius: 30px !important;
+
 }

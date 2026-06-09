@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 //Style 
-import '../Style/Login.css';
+import '../../Style/Login.css';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
@@ -31,7 +31,14 @@ export default function Login() {
         password,
       });
       console.log(res.data)
-      localStorage.setItem("token", res.data.data.access_token);
+   
+    // تخزين التوكن
+    const token = res.data.data.access_token;
+
+    localStorage.setItem("adminToken", token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    console.log('adminToken saved', token);
+
       navigate("/dashboard");
     } catch (err) {
       console.log(err);
@@ -49,14 +56,14 @@ export default function Login() {
       {/* Card */}
       <div className="Card">
 
-        <Card sx={{ minWidth: 400 }}  >
+        <Card   sx={{ width:600, }} className="Card_login" >
 
-          <CardContent style={{ margin: "5rem" }} >
+          <CardContent style={{ margin: "4rem" }} >
             {/* Logo / Title */}
-            <Typography gutterBottom sx={{ color: ' rgb(118, 209, 216)', fontSize: 20 }}>
+            <Typography gutterBottom sx={{ color: ' rgb(152, 172, 173)', fontSize: 30  , width:400}}>
               🌍 Tourism Admin
             </Typography>
-            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 19 }}>
+            <Typography gutterBottom sx={{  fontSize: 19 , width:400 , color: ' rgb(115, 117, 117)'}}>
               Welcome back, please login
             </Typography>
             {/*..............Form ..................*/}
@@ -94,7 +101,7 @@ export default function Login() {
               {/* Button */}
               <div className="input ">
                 <Stack   >
-                  <Button variant="contained" type="submit">  Submit  </Button>
+                  <Button  sx={{background:' rgba(14, 13, 34, 0.253)'}} type="submit ">  Submit  </Button>
                 </Stack>
               </div>
             </form>
