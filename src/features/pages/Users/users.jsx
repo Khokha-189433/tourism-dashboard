@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import {Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import {
   Table,
@@ -13,19 +13,22 @@ import {
   Typography,
   CircularProgress,
   Box,
-  Button 
+  Button,
 } from "@mui/material";
-import Header from "../../../components/layout/Header";
+import { useTheme } from "@mui/material/styles";
+
 ////////////////////////////////
 
 ///////////////////////////////
 export default function Users() {
+  const theme = useTheme();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const adminToken = localStorage.getItem("adminToken");
 
   useEffect(() => {
+    const adminToken = localStorage.getItem("adminToken");
+
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
@@ -36,16 +39,17 @@ export default function Users() {
             },
           }
         );
-        console.log('Axios response.data:', response.data);
-        setUsers(response.data.data)
-        setLoading(false);
 
-      } catch (error) {
-        console.error("Error fetching users:", error?.response || error);
-        setError(error?.response?.data?.message || error.message || 'Fetch error');
+        console.log('Axios response.data:', response.data);
+        setUsers(response.data.data || []);
+      } catch (fetchError) {
+        console.error("Error fetching users:", fetchError?.response || fetchError);
+        setError(fetchError?.response?.data?.message || fetchError.message || 'Fetch error');
+      } finally {
         setLoading(false);
       }
     };
+
     fetchUsers();
   }, []);
 
@@ -53,61 +57,77 @@ export default function Users() {
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        // justifyContent="center"
-        // alignItems="center"
-        // height="100vh"
-      >
+      <Box display="flex" justifyContent="center" mt={5}>
         <CircularProgress />
       </Box>
     );
   }
 
+  if (error) {
+    return (
+      <Box display="flex" justifyContent="center" mt={5}>
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <>
-     <Box  sx={{ display: 'flex'  }} >
-      <Header />
-    <Box  sx={{ p:9   ,width:"100%" }}   >
-    
-      <Typography variant="h3"  sx={{mx:"auto" , p:3 }} >
+    <Box component="main" sx={{ p: 3, width: '100%' }}>
+      <Typography variant="h4" gutterBottom>
         All Users
       </Typography>
 
-      <TableContainer   component={Paper} sx={{  background :"#9ec4f3e1"   ,textAlignLast:'center'  ,mx:"auto"  }}>
-        <Table  >
-          <TableHead sx={{background :"#0e70e7ba" }}>
-            {/*  TableRow  هو الصف بالجدول  */}
-            <TableRow >
-
-              {/*  TableCell  هو العامود في الجدولول  */}
+      <TableContainer
+        component={Paper}
+        
+         sx={{
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "#13171a"
+                    : "#fff",
+                  justifyContent: "",
+                  borderRadius: 3,
+                  boxShadow: 3,
+                  margin : "0 auto",   
+              }}
+      >
+        <Table  sx={{ }} aria-label="users table">
+          <TableHead sx={{}}>
+            <TableRow>
               <TableCell>First Name</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell> User </TableCell>
+              <TableCell>User</TableCell>
             </TableRow>
           </TableHead>
 
-          <TableBody  >
+          <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}     >
-                <TableCell >{user.first_name}</TableCell>
-                <TableCell>{user.email}</TableCell>   
+              <TableRow
+                key={user.id}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                }}
+              >
+                <TableCell>{user.first_name}</TableCell>
+                <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <Link to="/User"  state={{ UserId : user.id }}>
-                  <Button variant="outlined" color="success">
-                     Open
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    component={Link}
+                    to="/User"
+                    state={{ UserId: user.id }}
+                  >
+                    Open
                   </Button>
-                  </Link>
                 </TableCell>
-                
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
     </Box>
-     </Box>
-   
-    </>
   );
 }

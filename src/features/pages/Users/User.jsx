@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+
+// =========================
+// MUI COMPONENTS
+// =========================
 import {
   Box,
   Button,
   CircularProgress,
-  IconButton,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -19,41 +23,77 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Alert,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-////////////////////
-import Header from "../../../components/layout/Header"
 
+import { useTheme } from "@mui/material/styles";
+
+// =========================
+// ICONS
+// =========================
+import EditIcon from "@mui/icons-material/Edit";
+
+// ======================================================================
+// COMPONENT USER
+// ======================================================================
 
 export default function User() {
-  const [users, setUsers] = useState([]);
+
+  // ======================================================================
+  // STATES
+  // ======================================================================
+
+  // نخزن بيانات المستخدم الواحد
+  const [user, setUser] = useState(null);
+
+  // حالة التحميل أثناء جلب البيانات
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  // تخزين الأخطاء
+  const [error, setError] = useState("");
 
+  // الثيم الحالي (Dark / Light)
+  const theme = useTheme();
 
-  // Edit Dialog
-  const [openEdit, setOpenEdit] = useState(false);   // open Dialog
-  const [selectedUser, setSelectedUser] = useState(null);
+  // ======================================================================
+  // DIALOG STATES
+  // ======================================================================
 
+  // فتح وإغلاق نافذة التعديل
+  const [openEdit, setOpenEdit] = useState(false);
+
+  // بيانات الفورم الخاصة بالتعديل
   const [formData, setFormData] = useState({
     role: "",
     is_active: true,
   });
 
+  // ======================================================================
+  // GET USER ID FROM LOCATION
+  // ======================================================================
+
+  // نستقبل البيانات القادمة من الصفحة السابقة
   const location = useLocation();
-  const userId = location.state.UserId // Assuming you pass the user
-  // console.log(userId)
+
+  // userId القادم من navigate
+  const userId = location.state?.UserId;
+
+  // التوكن الخاص بالأدمن
   const adminToken = localStorage.getItem("adminToken");
 
-  // =========================
-  // GET USERS
-  // =========================
+  // ======================================================================
+  // FETCH USER DATA
+  // ======================================================================
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    if (!userId || !adminToken) {
+      return;
+    }
+
+    // دالة جلب بيانات المستخدم
+    const fetchUser = async () => {
       try {
+        // إرسال GET REQUEST
         const response = await axios.get(
           `/api/admin/users/${userId}`,
           {
@@ -63,45 +103,65 @@ export default function User() {
           }
         );
 
-        setUsers(response.data.data);
-        // console.log(response.data.data)
+        if (!response.data?.data) {
+          throw new Error("User not found.");
+        }
 
-      } catch (error) {
-        console.error("Error fetching users:", error?.response || error);
-        setError(error?.response?.data?.message || error.message || 'Fetch error');
-        setLoading(false);
+        // تخزين بيانات المستخدم
+        setUser(response.data.data);
+      } catch (err) {
+
+        console.error("Fetch Error:", err);
+
+        // تخزين رسالة الخطأ
+        setError(
+          err?.response?.data?.message ||
+          err.message ||
+          "Error Fetching User"
+        );
+
       } finally {
+
+        // إيقاف التحميل
         setLoading(false);
       }
     };
-    fetchUsers();
-  }, []);
 
+    // تنفيذ الدالة
+    fetchUser();
 
+  }, [userId, adminToken]);
 
-  // =========================
+  // ======================================================================
   // OPEN EDIT DIALOG
-  // =========================
+  // ======================================================================
 
-  const handleEditClick = (users) => {
-    setSelectedUser(users);
+  const handleEditClick = () => {
+    if (!user) {
+      return;
+    }
 
+    // تعبئة الفورم ببيانات المستخدم الحالية
     setFormData({
-      role: users.role,
-      is_active: users.is_active,
+      role: user.role || "",
+      is_active: Boolean(user.is_active),
     });
 
+    // فتح نافذة التعديل
     setOpenEdit(true);
   };
 
-  // =========================
+  // ======================================================================
   // UPDATE USER
-  // =========================
+  // ======================================================================
+
   const handleUpdateUser = async () => {
-    alert("hi in update")
+
     try {
-      const user = await axios.put(
-        `api/admin/users/${userId}`,
+
+      // إرسال PUT REQUEST لتحديث المستخدم
+      const response = await axios.put(
+        `/api/admin/users/${userId}`,
         formData,
         {
           headers: {
@@ -110,151 +170,315 @@ export default function User() {
           },
         }
       );
-      console.log('Axios response.data:', user.data);
-      setOpenEdit(true);
 
+      // تخزين البيانات الجديدة بعد التعديل
+      setUser(response.data.data);
 
-    } catch (error) {
-      console.error("Error updating user:", error);
+      // إغلاق نافذة التعديل
+      setOpenEdit(false);
+
+      // رسالة نجاح
+      alert("User Updated Successfully");
+
+    } catch (err) {
+
+      console.error("Update Error:", err);
+
+      alert(
+        err?.response?.data?.message ||
+        "Error Updating User"
+      );
     }
   };
 
-  // =========================
-  // DELETE USER
-  // =========================
+  if (!userId) {
+    return (
+      <Box sx={{ p: 5 }}>
+        <Alert severity="error">User ID is missing.</Alert>
+      </Box>
+    );
+  }
 
-  //   const handleDeleteUser = async (id) => {
-  //     const confirmDelete = window.confirm(
-  //       "Are you sure you want to delete this user?"
-  //     );
+  if (!adminToken) {
+    return (
+      <Box sx={{ p: 5 }}>
+        <Alert severity="error">
+          Admin token is missing. Please log in again.
+        </Alert>
+      </Box>
+    );
+  }
 
-  //     if (!confirmDelete) return;
+  // ======================================================================
+  // LOADING SCREEN
+  // ======================================================================
 
-  //     try {
-  //       await axios.delete(`/admin/users/${id}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${adminToken}`,
-  //         },
-  //       });
-
-  //       setUsers(users.filter((user) => user.id !== id));
-  //     } catch (error) {
-  //       console.error("Error deleting user:", error);
-  //     }
-  //   };
-
-  // =========================
-  // LOADING
-  // =========================
   if (loading) {
+
     return (
       <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 10,
+        }}
       >
         <CircularProgress />
       </Box>
     );
   }
 
+  // ======================================================================
+  // ERROR SCREEN
+  // ======================================================================
+
+  if (error) {
+
+    return (
+      <Box sx={{ p: 5 }}>
+        <Alert severity="error">
+          {error}
+        </Alert>
+      </Box>
+    );
+  }
+
+  // ======================================================================
+  // MAIN RETURN
+  // ======================================================================
+
   return (
     <>
-      <Box sx={{ display: 'flex' }} >
-        <Header />
-        <Box component="main" Box sx={{ p: 9, width: "100%"  }}>
 
-          <Typography variant="h4" sx={{ mx: "auto", p: 2 }} >
-            User Management
-          </Typography>
+      {/* ========================= */}
+      {/* HEADER */}
+      {/* ========================= */}
 
-          <TableContainer component={Paper} sx={{ textAlignLast: 'center', mx: "auto" }}>
-            <Table>
-              <TableHead sx={{ background: "#0e70e7ba" }}>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>First Name</TableCell>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Phone</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="center">Update User</TableCell>
+    
 
-                </TableRow>
-              </TableHead>
+      {/* ========================= */}
+      {/* MAIN CONTENT */}
+      {/* ========================= */}
 
-              <TableBody>
+      <Box
+        component="main"
+        sx={{
+          width: "100%",
+        }}
+      >
 
-                <TableRow key={users.id}>
-                  <TableCell>{users.id}</TableCell>
-                  <TableCell>{users.first_name}</TableCell>
-                  <TableCell>{users.last_name}</TableCell>
-                  <TableCell>{users.email}</TableCell>
-                  <TableCell>{users.role}</TableCell>
-                  <TableCell>{users.phone}</TableCell>
-                  <TableCell>
-                    {users.is_active ? "Active" : "Inactive"}
-                  </TableCell>
+        {/* ========================= */}
+        {/* PAGE TITLE */}
+        {/* ========================= */}
 
-                  <TableCell align="center">
-                    <EditIcon  // Button Edit User
-                      color="primary"
-                      onClick={() => handleEditClick(users)}
-                    >
-                    </EditIcon>
-                  </TableCell>
-                </TableRow>
+        <Typography
+          variant="h4"
+          sx={{
+            p: 2,
+          }}
+        >
+          User Management
+        </Typography>
 
-              </TableBody>
-            </Table>
-          </TableContainer>
+        {/* ========================= */}
+        {/* TABLE */}
+        {/* ========================= */}
+
+        <TableContainer
+          component={Paper}
+          sx={{
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "#13171a"
+        : "#fff",
+
+    borderRadius: 3,
+    boxShadow: 3,
+  }}
+        >
+
+          <Table>
+
+            {/* ========================= */}
+            {/* TABLE HEADER */}
+            {/* ========================= */}
+
+            <TableHead >
+              <TableRow>
+
+                <TableCell>ID</TableCell>
+
+                <TableCell>
+                  First Name
+                </TableCell>
+
+                <TableCell>
+                  Last Name
+                </TableCell>
+
+                <TableCell>Email</TableCell>
+
+                <TableCell>Role</TableCell>
+
+                <TableCell>Phone</TableCell>
+
+                <TableCell>Status</TableCell>
+
+                <TableCell align="center">
+                  Update User
+                </TableCell>
+
+              </TableRow>
+            </TableHead>
+
+            {/* ========================= */}
+            {/* TABLE BODY */}
+            {/* ========================= */}
+
+            <TableBody>
+
+              <TableRow key={user.id}>
+
+                <TableCell>
+                  {user.id}
+                </TableCell>
+
+                <TableCell>
+                  {user.first_name}
+                </TableCell>
+
+                <TableCell>
+                  {user.last_name}
+                </TableCell>
+
+                <TableCell>
+                  {user.email}
+                </TableCell>
+
+                <TableCell>
+                  {user.role}
+                </TableCell>
+
+                <TableCell>
+                  {user.phone}
+                </TableCell>
+
+                <TableCell>
+                  {user.is_active
+                    ? "Active"
+                    : "Inactive"}
+                </TableCell>
+
+                {/* ========================= */}
+                {/* EDIT BUTTON */}
+                {/* ========================= */}
+
+                <TableCell align="center">
+
+                  <EditIcon
+                    color="primary"
+                    sx={{
+                      cursor: "pointer",
+                    }}
+                    onClick={handleEditClick}
+                  />
+
+                </TableCell>
+
+              </TableRow>
+
+            </TableBody>
+
+          </Table>
+
+        </TableContainer>
+
+        {/* ====================================================================== */}
+        {/* EDIT DIALOG */}
+        {/* ====================================================================== */}
+
+        <Dialog
+          open={openEdit}
+          onClose={() => setOpenEdit(false)}
+        >
+
+          {/* عنوان النافذة */}
+          <DialogTitle>
+            Edit User
+          </DialogTitle>
+
+          {/* محتوى النافذة */}
+          <DialogContent>
+
+            {/* ========================= */}
+            {/* ROLE */}
+            {/* ========================= */}
+
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Role"
+              // القيمة الحالية
+              value={formData.role}
+
+              // تحديث القيمة
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  role: e.target.value,
+                })
+              }
+            />
+
+            {/* ========================= */}
+            {/* IS ACTIVE */}
+            {/* ========================= */}
+
+            <TextField
+              select
+              fullWidth
+              margin="normal"
+              label="Status"
+              value={formData.is_active ? "true" : "false"}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  is_active: e.target.value === "true",
+                })
+              }
+            >
+              <MenuItem value="true">Active</MenuItem>
+              <MenuItem value="false">Inactive</MenuItem>
+            </TextField>
+
+          </DialogContent>
 
           {/* ========================= */}
-          {/* EDIT DIALOG */}
+          {/* DIALOG BUTTONS */}
           {/* ========================= */}
 
-          <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
-            <DialogTitle>Edit User</DialogTitle>
+          <DialogActions>
 
-            <DialogContent>
-              <TextField
-                fullWidth
-                margin="normal"
-                label="role"
-                value={formData.role}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    role: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                fullWidth
-                margin="normal"
-                label="is_active"
-                value={formData.is_active}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    is_active: e.target.value === "true", // Convert string to boolean
-                  })
-                }
-              />
+            {/* زر الإلغاء */}
+            <Button
+              onClick={() => setOpenEdit(false)}
+            >
+              Cancel
+            </Button>
 
-            </DialogContent>
+            {/* زر الحفظ */}
+            <Button
+              variant="contained"
+              onClick={handleUpdateUser}
+            >
+              Save
+            </Button>
 
-            <DialogActions>
-              <Button>
-                Cancel
-              </Button>
-              <Button variant="contained" onClick={() => handleUpdateUser(users)} >
-                Save
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Box>
+          </DialogActions>
+
+        </Dialog>
 
       </Box>
-
     </>
   );
-}   
+}

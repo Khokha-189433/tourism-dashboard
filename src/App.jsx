@@ -1,42 +1,49 @@
+import { useMemo, useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import Login from "./features/pages/Login/Login";
 import Dashboard from "./features/pages/Dashboard/dashboard";
-import Header from "./components/layout/Header";
 import Users from "./features/pages/Users/users";
-import User from "./features/pages/Users/user";
+import Header from "./components/layout/Header";
 import './features/Style/AppCss.css';
-import Sidebar from "./components/layout/Sidebar"
-import { styled } from "@mui/material";
-
-
-/////////////////////////////////////////////////////
-  const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}))
-/////////////////////////////////////////////////////
+import ColorModeContext from './contexts/ColorModeContext';
+import User from "./features/pages/Users/User";
 function App() {
+  const [mode, setMode] = useState('light');
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+      }),
+    [mode],
+  );
+
+  const toggleColorMode = () => {
+    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+  };
+
   return (
-       
-     <div className="App">
-       
-        
-     
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/Users" element={<Users />} />
-        <Route path="/User" element={<User />} />
-      </Routes>
-    </div>
-       
-         
-      
-  
+    <ThemeProvider theme={theme}>
+      <ColorModeContext.Provider value={{ toggleColorMode }}>
+        <CssBaseline />
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route element={<Header />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="Users" element={<Users />} />
+              <Route path="/User" element={<User />} />
+
+
+            </Route>
+          </Routes>
+        </div>
+      </ColorModeContext.Provider>
+    </ThemeProvider>
   );
 }
 export default App;
