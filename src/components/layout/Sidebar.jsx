@@ -86,7 +86,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 function Sidebar({open ,handleDrawerClose }) {
     const array = [{text:"Dashboard", Icon : <InboxIcon /> , path:"/dashboard" } ,
        {text:"Users", Icon : <PeopleAltIcon /> , path:"/Users" } ,
-      {text:"Trip", Icon : <LocalAirportRoundedIcon /> , path:"/trip" }]
+      {text:"Trips", Icon : <LocalAirportRoundedIcon /> , path:"/trips" }]
     const navgiate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -134,56 +134,7 @@ function Sidebar({open ,handleDrawerClose }) {
         </List>
 
         <Divider />
-         {/*/////////////////////////// List Trip //////////////////////////////////////*/}
-            <List>
-                    <Link to="/dashboard" >
-                        <ListItem disablePadding sx={{ display: 'block' }}>
-
-                            <ListItemButton >
-                                <ListItemIcon>
-                                    <LocalAirportRoundedIcon />       {/*  Users Icon  */}
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={'Trip'}
-                                    sx={[
-                                        open
-                                            ? {
-                                                opacity: 1,
-                                            }
-                                            : {
-                                                opacity: 0,
-                                            },
-                                    ]}
-                                />
-                            </ListItemButton>
-                        </ListItem>
-                    </Link>
-                </List>
-                {/*////////////////////////////End List Trip //////////////////////////////////////*/}
-                  <List>
-                    <Link to="/Users" >
-                        <ListItem disablePadding sx={{ display: 'block' }}>
-
-                            <ListItemButton >
-                                <ListItemIcon>
-                                    <LocalAirportRoundedIcon />       {/*  Users Icon  */}
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={'Trip'}
-                                    sx={[
-                                        open
-                                            ? {
-                                                opacity: 1,
-                                            }
-                                            : {
-                                                opacity: 0,
-                                            },
-                                    ]}
-                                />
-                            </ListItemButton>
-                        </ListItem>
-                    </Link>
-                </List>
+   
       </Drawer>
     </>
   )

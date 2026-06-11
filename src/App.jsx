@@ -9,6 +9,8 @@ import Header from "./components/layout/Header";
 import './features/Style/AppCss.css';
 import ColorModeContext from './contexts/ColorModeContext';
 import User from "./features/pages/Users/User";
+import Trips from "./features/pages/Trips/Trips";
+import CreateTrip from "./features/pages/Trips/CreateTrip";
 function App() {
   const [mode, setMode] = useState('light');
 
@@ -37,6 +39,9 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="Users" element={<Users />} />
               <Route path="/User" element={<User />} />
+              <Route path="/Trips" element={<Trips />} />
+              <Route path="/CreateTrip" element={<CreateTrip />} />
+              
 
 
             </Route>

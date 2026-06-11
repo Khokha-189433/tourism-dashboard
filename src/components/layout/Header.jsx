@@ -19,7 +19,7 @@ const drawerWidth = 240;
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
+  alignitems: 'center',
   justifyContent: 'center',
   padding: theme.spacing(0, 2),
   ...theme.mixins.toolbar,
@@ -78,7 +78,7 @@ export default function Header() {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} alignitems="center">
               <IconButton color="inherit" onClick={colorMode.toggleColorMode}>
                 {theme.palette.mode === 'light' ? (
                   <Brightness4OutlinedIcon />
