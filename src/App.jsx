@@ -10,7 +10,8 @@ import './features/Style/AppCss.css';
 import ColorModeContext from './contexts/ColorModeContext';
 import User from "./features/pages/Users/User";
 import Trips from "./features/pages/Trips/Trips";
-import CreateTrip from "./features/pages/Trips/CreateTrip";
+import CreateTrip from "./features/pages/Trips/CUDTrip/CreateTrip"
+import Trip from "./features/pages/Trips/Trip";
 function App() {
   const [mode, setMode] = useState('light');
 
@@ -41,7 +42,8 @@ function App() {
               <Route path="/User" element={<User />} />
               <Route path="/Trips" element={<Trips />} />
               <Route path="/CreateTrip" element={<CreateTrip />} />
-              
+              <Route path="/Trip" element={<Trip />} />
+               
 
 
             </Route>

@@ -1,61 +1,103 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  Card,
   Chip,
+  CircularProgress,
+  Grid,
   IconButton,
+  InputAdornment,
+  MenuItem,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
-  Divider , 
-  CircularProgress
+  Divider,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useEffect, useState } from "react";
+import Alert from '@mui/material/Alert';
 import axios from "axios";
-import { Link } from "react-router-dom";
-//////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 
-// const trip = [
-//   {
-//     id: 1,
-//     title: "رحلة إلى تدمر",
-//     destination: "تدمر",
-//     price: 150000 ,
-//     currency : "SYP",
-//     duration: 3,
-//     participants: 25,
-//     status: "published",
-//   },
-//   {
-//     id: 2,
-//     title: "رحلة إلى دمشق",
-//     destination: "دمشق",
-//     price: 100000, 
-//      currency : "SYP",
-//     duration: 2,
-//     participants: 15,
-//     status: "draft",
-//   },
-// ];
+const categories = ["تاريخية", "طبيعية", "دينية", "مغامرات"];
+const statuses = ["published", "draft"];
 
 export default function TripsTable() {
    const theme = useTheme();
    const [trips, setTrips] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
+   const location = useLocation();
+   const navigate = useNavigate();
+   const [snackbarOpen, setSnackbarOpen] = useState(Boolean(location.state?.message));
+   const [snackbarMessage] = useState(location.state?.message || "");
+   const [snackbarSeverity] = useState(location.state?.severity || "success");
+
+   // حالة الفلاتر في الشاشة
+   const [filters, setFilters] = useState({
+     search: "",
+     category: "",
+     status: "",
+     minPrice: "",
+     maxPrice: "",
+   });
+
+   const loadTrips = React.useCallback(async (filterValues) => {
+     setLoading(true);
+     try {
+       const adminToken = localStorage.getItem("adminToken");
+       const params = new URLSearchParams();
+       params.append("page", 1);
+       params.append("limit", 10);
+       if (filterValues.search) params.append("search", filterValues.search);
+       if (filterValues.category) params.append("category", filterValues.category);
+       if (filterValues.status) params.append("status", filterValues.status);
+       if (filterValues.minPrice) params.append("min_price", filterValues.minPrice);
+       if (filterValues.maxPrice) params.append("max_price", filterValues.maxPrice);
+
+       const response = await axios.get(`/api/trips?${params.toString()}`, {
+         headers: { Authorization: `Bearer ${adminToken}` },
+       });
+       setTrips(response.data.data || response.data || []);
+     } catch (err) {
+       console.error("Error fetching trips:", err);
+       setError(err?.response?.data?.message || err.message || "Fetch error");
+     } finally {
+       setLoading(false);
+     }
+   }, []);
+
+   const handleFilterChange = (e) => {
+     const { name, value } = e.target;
+     setFilters((prev) => ({ ...prev, [name]: value }));
+   };
+
+   const applyFilters = () => {
+     loadTrips(filters);
+   };
+
+   const resetFilters = () => {
+     const emptyFilters = { search: "", category: "", status: "", minPrice: "", maxPrice: "" };
+     setFilters(emptyFilters);
+     loadTrips(emptyFilters);
+   };
+
+
+   //////////////////////////////////////////////
   // لون الحالة
   const getStatusColor = (status) => {
     switch (status) {
@@ -70,38 +112,25 @@ export default function TripsTable() {
     }
   };
 
+  const handleSnackbarClose = (_, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
 
   useEffect(() => {
-    // الحصول على التوكن من التخزين المحلي
-    const adminToken = localStorage.getItem("adminToken");
+    if (location.state?.message) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
 
-    const fetchTrips = async () => {
-      try {
-        // طلب بيانات الرحلات من API عبر بروكسي Vite
-        const response = await axios.get(
-          "/api/trips?page=1&limit=10",
-          {
-            headers: {
-              Authorization: `Bearer ${adminToken}`,
-            },
-          }
-        );
-
-        console.log('Axios response.data:', response);
-        // حفظ البيانات في حالة الرحلات
-        setTrips(response.data.data || response.data );
-      } catch (fetchError) {
-        console.error("Error fetching trips:", fetchError?.response || fetchError);
-        // حفظ رسالة الخطأ للعرض
-        setError(fetchError?.response?.data?.message || fetchError.message || 'Fetch error');
-      } finally {
-        // إيقاف حالة التحميل بعد انتهاء الطلب
-        setLoading(false);
-      }
+    // تحميل الرحلات عند دخول الصفحة لأول مرة
+    const init = async () => {
+      await loadTrips({});
     };
-  
-    fetchTrips();
-  }, []);
+
+    init();
+  }, [location.state, location.pathname, navigate, loadTrips]);
 
   // عرض مؤشر التحميل أثناء انتظار استجابة السيرفر
   if (loading) {
@@ -134,8 +163,14 @@ export default function TripsTable() {
           إدارة الرحلات
         </Typography>
         <Divider />
+        {/*  */}
+
+
+
+
+
+        {/*  */}
         {/* زر إضافة رحلة */}
-        
          <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -154,6 +189,59 @@ export default function TripsTable() {
         </Button>
        
       </Box>
+
+      {/* واجهة الفلاتر */}
+      <Card sx={{ p: 2, mb: 3, borderRadius: 5 , border:'1px solid #b0a3a399' }}>
+        <Typography variant="h6" mb={2}>فلترة الرحلات</Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              name="search"
+              label="ابحث عن رحلة"
+              value={filters.search}
+              onChange={handleFilterChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={2}>
+            <TextField select fullWidth name="category" label="التصنيف" value={filters.category} onChange={handleFilterChange}>
+              <MenuItem value="">الكل</MenuItem>
+              {categories.map((c) => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={12} md={2}>
+            <TextField select fullWidth name="status" label="الحالة" value={filters.status} onChange={handleFilterChange}>
+              <MenuItem value="">الكل</MenuItem>
+              {statuses.map((s) => (<MenuItem key={s} value={s}>{s}</MenuItem>))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={6} md={2}>
+            <TextField fullWidth type="number" name="minPrice" label="أقل سعر" value={filters.minPrice} onChange={handleFilterChange} />
+          </Grid>
+
+          <Grid item xs={6} md={2}>
+            <TextField fullWidth type="number" name="maxPrice" label="أعلى سعر" value={filters.maxPrice} onChange={handleFilterChange} />
+          </Grid>
+
+          <Grid item xs={12} md={12}>
+            <Box display="flex" gap={2} mt={1}>
+              <Button variant="contained" startIcon={<FilterAltIcon />} onClick={applyFilters} sx={{margin:2}}>تطبيق الفلاتر</Button>
+              <Button variant="outlined" onClick={resetFilters}>إعادة تعيين</Button>
+            </Box>
+          </Grid>
+        </Grid>
+      </Card>
+        {/* واجهة الفلاتر  نهاية */}
 
       {/* الجدول */}
       <TableContainer
@@ -228,9 +316,10 @@ export default function TripsTable() {
 
                
 
-                {/* الأزرار */}
-                <TableCell align="center">
-                  <IconButton color="primary">
+                {/* ///////////الأزرار ////////////*/}
+                <TableCell align="center">       {/*زر دخول الى الرحلة عن طريق   id     */}
+               
+                  <IconButton color="primary" component={Link} to="/Trip" state={{ TripId: trip.id }}>
                     <VisibilityIcon />
                   </IconButton>
 
@@ -247,6 +336,16 @@ export default function TripsTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

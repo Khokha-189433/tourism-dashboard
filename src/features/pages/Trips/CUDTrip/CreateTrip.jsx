@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+
 import {
   Box,
   Button,
@@ -12,10 +13,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+///////////////////////////////////
+
+/////////////////////////////////
 
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CreateTrip = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title_ar: "",
@@ -105,7 +111,7 @@ const CreateTrip = () => {
         setLoading(false);
         return;
       }
-
+     /// تجهيز البيانات للإرسال والتأكد من تحويل الأنواع بشكل صحيح 
       const payload = {
         ...formData,
         price: Number(formData.price),
@@ -130,9 +136,7 @@ const CreateTrip = () => {
 
       console.log("response.data:", response.data);
 
-      alert("تم إنشاء الرحلة بنجاح");
-      
-      // إعادة تعيين النموذج
+      // إعادة تعيين النموذج  يعني تفريغ النموذج واعادته الى شكله الافتراضي 
       setFormData({
         title_ar: "",
         title_en: "",
@@ -147,6 +151,13 @@ const CreateTrip = () => {
         max_participants: "",
         status: "published",
         is_featured: false,
+      });
+   ///هذا السطر ينقل المستخدم من صفحة إنشاء الرحلة إلى صفحة عرض الرحلات ويُمرّر معه رسالة نجاح.
+      navigate("/Trips", {  // هذا ينقل التطبيق إلى المسار /Trips  //يستخدم react-router-dom، لذلك يحدث التنقل داخل التطبيق بدون إعادة تحميل الصفحة.
+        state: {
+          message: "تم إنشاء الرحلة بنجاح",
+          severity: "success",
+        },
       });
     } catch (error) {
       console.error("خطأ مفصل:", error.response?.data || error.message);
