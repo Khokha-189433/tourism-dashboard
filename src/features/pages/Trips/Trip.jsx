@@ -140,9 +140,6 @@ const TripDetails = () => {
     <Box 
        sx={{ flexGrow: 1 }}
       >   
-
-
-
        <Grid container spacing={2}>
         <Grid size={6}>
                {/* Hero Section */}
@@ -234,7 +231,7 @@ const TripDetails = () => {
         <Card sx={{ m: 1 ,  borderRadius: 5,}}>
             <CardContent sx={{ m: 3}}>
               <Typography variant="subtitle1" fontWeight="bold" mb={1} >
-                معلومات موجزة
+                معلومات  الرحلة 
               </Typography>
               <Table size="small">
                 <TableBody>
@@ -284,14 +281,7 @@ const TripDetails = () => {
 
         </Grid>
       </Grid>
-    
-
-
-     
     </Box>
-  
-
-
 
       {/* ////////////////////////////////////////////// */}
 
@@ -299,13 +289,13 @@ const TripDetails = () => {
       <Grid container spacing={3}>
 
         {/* Left */}
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={7}>
 
           {/* Description */}
           <Card sx={{ borderRadius: 5, mb: 3 }}>
             <CardContent>
 
-                  <Typography
+              <Typography
                 variant="h5"
                 fontWeight="bold"
                 mb={3}
@@ -337,23 +327,17 @@ const TripDetails = () => {
         </Grid>
 
         {/* Right */}
-        <Grid item xs={100} md={4}>
-
-          {/* معلومات الرحلة */}
-            <CardContent>
-
-
-
-            </CardContent>
-       
+        <Grid item sx={{ borderRadius: 5, mb: 3 }}>
+      
           {/* معرض الصور */}
-        <TripGallery
-        trip={trip}
-        TripId={TripId}
-         adminToken={adminToken}
-         getTrip={getTrip}
-         />
-
+          <CardContent>
+              <TripGallery
+                trip={trip}
+                TripId={TripId}
+                adminToken={adminToken}
+                getTrip={getTrip}
+                />
+            </CardContent>
         </Grid>
 
       </Grid>

@@ -21,7 +21,8 @@ import MailIcon from '@mui/icons-material/Mail';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LocalAirportRoundedIcon from '@mui/icons-material/LocalAirportRounded';
-import { ColorLens } from '@mui/icons-material';
+// استيراد أيقونة تسجيل الخروج
+import { ColorLens, LogoutOutlined } from '@mui/icons-material';
 import {grey} from '@mui/material/colors'
 
 const drawerWidth = 240;
@@ -90,6 +91,14 @@ function Sidebar({open ,handleDrawerClose }) {
     const navgiate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
+  
+  // دالة تسجيل الخروج: تحذف التوكن وتعيد التوجيه للصفحة الرئيسية
+  const handleLogout = () => {
+    if (window.confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
+      localStorage.removeItem("adminToken"); // حذف التوكن المحفوظ
+      navgiate("/"); // إعادة التوجيه لصفحة تسجيل الدخول
+    }
+  };
   return (
     <>
         <Drawer variant="permanent" open={open}>
@@ -134,6 +143,31 @@ function Sidebar({open ,handleDrawerClose }) {
         </List>
 
         <Divider />
+        
+        {/* زر تسجيل الخروج في أسفل القائمة الجانبية */}
+        <Box sx={{ flexGrow: 1 }} />
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton 
+              onClick={handleLogout}
+              sx={{
+                justifyContent: open ? "center" : "inherit",
+                color: "rgba(250, 239, 239, 0.945)",
+              }}
+            >
+              <ListItemIcon sx={{ color: "rgba(234, 87, 87, 0.945)" }}>
+                <LogoutOutlined />
+              </ListItemIcon>
+              <ListItemText 
+                primary="LogOut "
+                sx={{
+                  color: "rgba(48, 141, 203, 0.945)",
+                  opacity: open ? 1 : 0,
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+        </List>
    
       </Drawer>
     </>
