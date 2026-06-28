@@ -29,8 +29,10 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Alert from '@mui/material/Alert';
-import axios from "axios";
+import { deleteTrip } from "./CUDTrip/DeleteTrip";
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import api from "../../../api/refreshToken";
 
 
 const categories = ["تاريخية", "طبيعية", "دينية", "مغامرات"];
@@ -47,7 +49,8 @@ export default function TripsTable() {
    const [snackbarMessage] = useState(location.state?.message || "");
    const [snackbarSeverity] = useState(location.state?.severity || "success");
 
-   // حالة الفلاتر في الشاشة
+
+  // حالة الفلاتر في الشاشة
    const [filters, setFilters] = useState({
      search: "",
      category: "",
@@ -59,7 +62,7 @@ export default function TripsTable() {
    const loadTrips = React.useCallback(async (filterValues) => {
      setLoading(true);
      try {
-       const adminToken = localStorage.getItem("adminToken");
+      
        const params = new URLSearchParams();
        params.append("page", 1);
        params.append("limit", 10);
@@ -69,9 +72,7 @@ export default function TripsTable() {
        if (filterValues.minPrice) params.append("min_price", filterValues.minPrice);
        if (filterValues.maxPrice) params.append("max_price", filterValues.maxPrice);
 
-       const response = await axios.get(`/api/trips?${params.toString()}`, {
-         headers: { Authorization: `Bearer ${adminToken}` },
-       });
+       const response = await api.get(`/trips?${params.toString()}`);
        setTrips(response.data.data || response.data || []);
      } catch (err) {
        console.error("Error fetching trips:", err);
@@ -95,8 +96,6 @@ export default function TripsTable() {
      setFilters(emptyFilters);
      loadTrips(emptyFilters);
    };
-
-
    //////////////////////////////////////////////
   // لون الحالة
   const getStatusColor = (status) => {
@@ -148,7 +147,22 @@ export default function TripsTable() {
       </Box>
     );
   }
+    ////////////////////////////////////////
+    const handleDeleteTrip = async (tripId) => {
+  if (!window.confirm("هل أنت متأكد من حذف الرحلة؟")) return;
 
+      try {
+        await deleteTrip(tripId);
+
+        await loadTrips(filters);
+
+        alert("تم حذف الرحلة بنجاح");
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء حذف الرحلة");
+      }
+      };
+    ///////////////////////////////////////
 
   return (
     <Box p={30}>
@@ -210,7 +224,7 @@ export default function TripsTable() {
               }}
             />
           </Grid>
-
+      
           <Grid item xs={12} md={2}>
             <TextField select fullWidth name="category" label="التصنيف" value={filters.category} onChange={handleFilterChange}>
               <MenuItem value="">الكل</MenuItem>
@@ -319,15 +333,17 @@ export default function TripsTable() {
                 {/* ///////////الأزرار ////////////*/}
                 <TableCell align="center">       {/*زر دخول الى الرحلة عن طريق   id     */}
                
-                  <IconButton color="primary" component={Link} to="/Trip" state={{ TripId: trip.id }}>
+                  <IconButton color="primary" component={Link} to={`/Trip/${trip.id}`} >
                     <VisibilityIcon />
                   </IconButton>
 
-                  <IconButton color="warning">
+                  <IconButton color="warning" component={Link}  to={`/EditTrip/${trip.id}`}>
                     <EditIcon />
                   </IconButton>
 
-                  <IconButton color="error">
+                  <IconButton color="error"  
+                  onClick={() => handleDeleteTrip(trip.id)
+                  }>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>

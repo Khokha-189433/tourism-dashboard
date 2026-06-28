@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api/refreshToken"
 import { useLocation } from "react-router-dom";
 
 // =========================
@@ -79,14 +79,14 @@ export default function User() {
   const userId = location.state?.UserId;
 
   // التوكن الخاص بالأدمن
-  const adminToken = localStorage.getItem("adminToken");
+ 
 
   // ======================================================================
   // FETCH USER DATA
   // ======================================================================
 
   useEffect(() => {
-    if (!userId || !adminToken) {
+    if (!userId ) {
       return;
     }
 
@@ -94,13 +94,8 @@ export default function User() {
     const fetchUser = async () => {
       try {
         // إرسال GET REQUEST
-        const response = await axios.get(
-          `/api/admin/users/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${adminToken}`,
-            },
-          }
+        const response = await api.get(
+          `/admin/users/${userId}`
         );
 
         if (!response.data?.data) {
@@ -130,7 +125,7 @@ export default function User() {
     // تنفيذ الدالة
     fetchUser();
 
-  }, [userId, adminToken]);
+  }, [userId]);
 
   // ======================================================================
   // OPEN EDIT DIALOG
@@ -158,19 +153,18 @@ export default function User() {
   const handleUpdateUser = async () => {
 
     try {
-
+       console.log("Before request");
       // إرسال PUT REQUEST لتحديث المستخدم
-      const response = await axios.put(
-        `/api/admin/users/${userId}`,
+      const response = await api.put(
+        `/admin/users/${userId}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${adminToken}`,
             "Content-Type": "application/json",
           },
         }
       );
-
+      console.log("After request");
       // تخزين البيانات الجديدة بعد التعديل
       setUser(response.data.data);
 
@@ -179,7 +173,7 @@ export default function User() {
 
       // رسالة نجاح
       alert("User Updated Successfully");
-
+      
     } catch (err) {
 
       console.error("Update Error:", err);
@@ -199,15 +193,15 @@ export default function User() {
     );
   }
 
-  if (!adminToken) {
-    return (
-      <Box sx={{ p: 5 }}>
-        <Alert severity="error">
-          Admin token is missing. Please log in again.
-        </Alert>
-      </Box>
-    );
-  }
+  // if (!a) {
+  //   return (
+  //     <Box sx={{ p: 5 }}>
+  //       <Alert severity="error">
+  //         Admin token is missing. Please log in again.
+  //       </Alert>
+  //     </Box>
+  //   );
+  // }
 
   // ======================================================================
   // LOADING SCREEN

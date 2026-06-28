@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+
 import {
   Table,
   TableBody,
@@ -17,6 +17,7 @@ import {
   Divider 
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import api from "../../../api/refreshToken";
 
 ////////////////////////////////
 
@@ -32,21 +33,16 @@ export default function Users() {
 
   useEffect(() => {
     // الحصول على التوكن من التخزين المحلي
-    const adminToken = localStorage.getItem("adminToken");
 
     const fetchUsers = async () => {
       try {
         // طلب بيانات المستخدمين من API
-        const response = await axios.get(
-          "/api/admin/users?page=1&limit=10&role=customer",
-          {
-            headers: {
-              Authorization: `Bearer ${adminToken}`,
-            },
-          }
+        const response = await api.get(
+          "/admin/users?page=1&limit=10&role=customer",
+          
         );
 
-        console.log('Axios response.data:', response.data);
+        console.log('response.data:', response.data);
         // حفظ البيانات في حالة المستخدمين
         setUsers(response.data.data || []);
       } catch (fetchError) {

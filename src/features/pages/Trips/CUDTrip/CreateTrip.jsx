@@ -17,8 +17,10 @@ import {
 
 /////////////////////////////////
 
-import axios from "axios";
+
+
 import { useNavigate } from "react-router-dom";
+import api from "../../../../api/refreshToken";
 
 const CreateTrip = () => {
   const navigate = useNavigate();
@@ -103,14 +105,7 @@ const CreateTrip = () => {
         return;
       }
 
-      // الحصول على التوكن من التخزين المحلي
-      const adminToken = localStorage.getItem("adminToken");
-
-      if (!adminToken) {
-        alert("لم يتم العثور على التوكن. يرجى تسجيل الدخول مرة أخرى");
-        setLoading(false);
-        return;
-      }
+      //
      /// تجهيز البيانات للإرسال والتأكد من تحويل الأنواع بشكل صحيح 
       const payload = {
         ...formData,
@@ -123,35 +118,21 @@ const CreateTrip = () => {
 
       console.log("إرسال البيانات:", payload);
 
-      const response = await axios.post(
-        "/api/trips",
+      const response = await api.post(
+        "/trips",
         payload,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${adminToken}`,
+
           },
         }
       );
 
       console.log("response.data:", response.data);
 
-      // إعادة تعيين النموذج  يعني تفريغ النموذج واعادته الى شكله الافتراضي 
-      setFormData({
-        title_ar: "",
-        title_en: "",
-        description_ar: "",
-        description_en: "",
-        short_description_ar: "",
-        short_description_en: "",
-        price: "",
-        discount_price: "",
-        currency: "USD",
-        duration_days: "",
-        max_participants: "",
-        status: "published",
-        is_featured: false,
-      });
+      
+
    ///هذا السطر ينقل المستخدم من صفحة إنشاء الرحلة إلى صفحة عرض الرحلات ويُمرّر معه رسالة نجاح.
       navigate("/Trips", {  // هذا ينقل التطبيق إلى المسار /Trips  //يستخدم react-router-dom، لذلك يحدث التنقل داخل التطبيق بدون إعادة تحميل الصفحة.
         state: {
@@ -161,15 +142,7 @@ const CreateTrip = () => {
       });
     } catch (error) {
       console.error("خطأ مفصل:", error.response?.data || error.message);
-      
-      const backendErrors = error.response?.data?.errors;
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          (backendErrors ? backendErrors.map((e) => e.message).join(', ') : null) ||
-                          error.message || 
-                          "حدث خطأ غير متوقع";
-      
-      alert(`خطأ: ${errorMessage}`);
+    
     } finally {
       setLoading(false);
     }

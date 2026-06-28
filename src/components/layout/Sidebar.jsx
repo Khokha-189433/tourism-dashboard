@@ -12,18 +12,18 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import ListItem from '@mui/material/ListItem';
+import {  useNavigate, useLocation } from 'react-router-dom';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LocalAirportRoundedIcon from '@mui/icons-material/LocalAirportRounded';
 // استيراد أيقونة تسجيل الخروج
-import { ColorLens, LogoutOutlined } from '@mui/icons-material';
 import {grey} from '@mui/material/colors'
+import LogOut from '../../features/LogOut/LogOut';
 
 const drawerWidth = 240;
 
@@ -45,7 +45,7 @@ const closedMixin = (theme) => ({
   overflowX: 'hidden',
   width: `calc(${theme.spacing(2)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(6.6)} + 1px)`,
+    width: `calc(${theme.spacing(7.6)} + 1px)`,
   },
 });
 /////////////////////Style Drawer (Sidebar)  //////////////////////////
@@ -73,7 +73,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     ],
   }),
 );
-//////////////////////////////////
+////////////// زر فتح واغلاق ال sidebar////////////////////
+
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -85,20 +86,16 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 function Sidebar({open ,handleDrawerClose }) {
-    const array = [{text:"Dashboard", Icon : <InboxIcon /> , path:"/dashboard" } ,
-       {text:"Users", Icon : <PeopleAltIcon /> , path:"/Users" } ,
-      {text:"Trips", Icon : <LocalAirportRoundedIcon /> , path:"/trips" }]
-    const navgiate = useNavigate();
-  const location = useLocation();
-  const theme = useTheme();
+    const array = [
+      {text:"Dashboard", Icon : <InboxIcon /> , path:"/dashboard" } ,
+      {text:"Users", Icon : <PeopleAltIcon /> , path:"/Users" } ,
+      {text:"Trips", Icon : <LocalAirportRoundedIcon /> , path:"/trips" }
+    ]
+      const navgiate = useNavigate();
+      const location = useLocation();
+      const theme = useTheme();
   
-  // دالة تسجيل الخروج: تحذف التوكن وتعيد التوجيه للصفحة الرئيسية
-  const handleLogout = () => {
-    if (window.confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
-      localStorage.removeItem("adminToken"); // حذف التوكن المحفوظ
-      navgiate("/"); // إعادة التوجيه لصفحة تسجيل الدخول
-    }
-  };
+
   return (
     <>
         <Drawer variant="permanent" open={open}>
@@ -142,33 +139,14 @@ function Sidebar({open ,handleDrawerClose }) {
           ))}
         </List>
 
-        <Divider />
+    
         
         {/* زر تسجيل الخروج في أسفل القائمة الجانبية */}
-        <Box sx={{ flexGrow: 1 }} />
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton 
-              onClick={handleLogout}
-              sx={{
-                justifyContent: open ? "center" : "inherit",
-                color: "rgba(250, 239, 239, 0.945)",
-              }}
-            >
-              <ListItemIcon sx={{ color: "rgba(234, 87, 87, 0.945)" }}>
-                <LogoutOutlined />
-              </ListItemIcon>
-              <ListItemText 
-                primary="LogOut "
-                sx={{
-                  color: "rgba(48, 141, 203, 0.945)",
-                  opacity: open ? 1 : 0,
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </List>
-   
+         <Box sx={{ flexGrow: 1 }} />
+           <Divider />
+                <List>
+                       <LogOut />
+                </List>
       </Drawer>
     </>
   )

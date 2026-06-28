@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+
 
 import {
   Box,
@@ -22,13 +22,13 @@ import {
 ///////////////////////////////
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import api from "../../../../api/refreshToken";
 
 
 
 export default function TripGallery ({
   trip,
   TripId,
-  adminToken,
   getTrip,
 }) {
   const [open, setOpen] = useState(false);
@@ -39,19 +39,6 @@ export default function TripGallery ({
     src: getImageUrl(image),
   })) || [];
 
-  // دالة لمعالجة رابط الصورة: تتحقق ما إذا كانت URL كاملة أو نسبية
-  // هذا يدعم حالتي البيانات:
-  // 1. URL كاملة: https://example.com/image.jpg
-  // 2. URL نسبية: /uploads/image.jpg أو uploads/image.jpg
-  // const getImageUrl = (image) => {
-  //   if (!image.image_url) return '';
-  //   // إذا كانت URL كاملة (تبدأ بـ http)، استخدمها مباشرة
-  //   if (image.image_url.startsWith('http')) {
-  //     return image.image_url;
-  //   }
-  
-  //   return image.image_url.startsWith('/') ? image.image_url : `/uploads/${image.image_url}`;
-  // };
   
   // دالة  لإرجاع رابط الصورة
 function getImageUrl(image) {
@@ -80,24 +67,14 @@ function getImageUrl(image) {
       } 
 
     try {
-      if (!adminToken) {
-        alert("يرجى تسجيل الدخول مرة أخرى");
-        localStorage.removeItem("adminToken");
-        navigate("/");
-        return;
-      }
+    
 
       const formData = new FormData();
       formData.append("images", file);
 
-      await axios.post(
-        `/api/trips/${TripId}/images`,
+      await api.post(
+        `/trips/${TripId}/images`,
         formData,
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
-          },
-        }
       );
 
       alert("تم رفع الصورة");
@@ -107,7 +84,7 @@ function getImageUrl(image) {
     } catch (error) {
       console.error(error.response?.data || error);
       if (error.response?.status === 401) {
-        localStorage.removeItem("adminToken");
+        localStorage.removeItem("accessToken");
         alert(
           error.response?.data?.message === "Token expired"
             ? "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى."
@@ -123,25 +100,16 @@ function getImageUrl(image) {
   const handleDeleteImage = async (image) => {
     if (!window.confirm("هل أنت متأكد أنك تريد حذف هذه الصورة؟")) return;
 
-    if (!adminToken) {
-      alert("يرجى تسجيل الدخول مرة أخرى");
-      localStorage.removeItem("adminToken");
-      navigate("/");
-      return;
-    }
+   
 
     const imageId = image.id || image._id;
 
     const url = imageId
-      ? `/api/trips/${TripId}/images/${imageId}`
-      : `/api/trips/${TripId}/images?url=${encodeURIComponent(image.image_url)}`;
+      ? `/trips/${TripId}/images/${imageId}`
+      : `/trips/${TripId}/images?url=${encodeURIComponent(image.image_url)}`;
 
     try {
-      await axios.delete(url, {
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-      });
+      await api.delete(url);
 
       alert("تم حذف الصورة");
       getTrip();
@@ -149,7 +117,7 @@ function getImageUrl(image) {
       console.error(error.response?.data || error);
       alert("حدث خطأ أثناء حذف الصورة، يرجى المحاولة مرة أخرى.");
       if (error.response?.status === 401) {
-        localStorage.removeItem("adminToken");
+        localStorage.removeItem("accessToken");
         navigate("/");
       }
     }
@@ -164,11 +132,12 @@ function getImageUrl(image) {
     
     >
        <Typography
-          variant="h5"
+          variant="h4"
           fontWeight="bold"
-          sx={{margin:2 }}
+          sx={{margin:4 , color:"#7cb8d8" , fontFamily:"math" ,}}
         >
-          معرض الصور
+            <Divider>  معرض الصور </Divider>
+        
         </Typography>
         <Divider />
            <Button

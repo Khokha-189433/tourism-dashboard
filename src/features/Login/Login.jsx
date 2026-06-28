@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 
 //Style 
-import '../../Style/Login.css';
+import './Login.css';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
@@ -12,6 +12,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import api from "../../api/refreshToken";
 //////////
 
 
@@ -19,36 +20,42 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  console.log(loading)
   const navigate = useNavigate();
-
+  
   const Submit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await axios.post("/api/auth/login", {
+      const res = await api.post("/auth/login", {
         email,
         password,
       });
       console.log(res.data)
    
     // تخزين التوكن
-    const token = res.data.data.access_token;
+ const token = res.data.data.access_token ;
+ localStorage.setItem("accessToken", token);
 
-    localStorage.setItem("adminToken", token);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    console.log('adminToken saved', token);
+// // احفظ الـ refresh token ← هذا هو الجديد
+const refreshToken = res.data.data.refresh_token ;
+localStorage.setItem("refreshToken", refreshToken);
+console.log( "RefreshToken"+ refreshToken);
+//  
 
-      navigate("/dashboard");
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+console.log('accessToken'+  token);
+
+navigate("/dashboard");
+} catch (err) {
+  console.log(err);
+} finally {
+  setLoading(false);
+}
+};
 
 
-  {/* onSubmit */ }
+ {/* onSubmit */ }
 
   return (
     <div className="login-page">

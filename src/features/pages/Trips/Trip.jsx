@@ -1,7 +1,7 @@
 ﻿import React, { useCallback, useEffect, useState } from 'react';
-import { useLocation } from "react-router-dom";
 import TripGallery from "../Trips/Images/TripGallery"
-import axios from "axios";
+
+import Divider from '@mui/material/Divider';
 
 import {
   Box,
@@ -26,23 +26,22 @@ import {
   MonetizationOn,
   Upload,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
- 
+
+import api from '../../../api/refreshToken';
+   import { useParams } from "react-router-dom";
 const TripDetails = () => {
-    const navigate = useNavigate();
+  
     //   // GET rip ID FROM LOCATION
 //   // ======================================================================
 
   // نستقبل البيانات القادمة من الصفحة السابقة
-  const location = useLocation();
+ // const location = useLocation();  
 
   // TripId القادم من navigate أو من حالة الرابط
-  const TripId = location.state?.TripId || location.state?.UserId || location.state?.tripId || location.state?.id;
+  // const TripId = location.state?.TripId || location.state?.UserId || location.state?.tripId || location.state?.id;
 
-  // التوكن الخاص بالأدمن
-  const adminToken = localStorage.getItem("adminToken");
-
-
+ //  جلب tripId
+  const { tripId } = useParams();
   // State لتخزين بيانات الرحلة
   const [trip, setTrip] = useState(null);
   const [error, setError] = useState(null);
@@ -53,26 +52,16 @@ const TripDetails = () => {
   // جلب بيانات الرحلة
   const getTrip = useCallback(async () => {
   
-    if (!TripId) {
+    if (!tripId) {
       setError("رقم الرحلة غير موجود");
       setLoading(false);
       return;
     }
    
     try {
-      if (!adminToken) {
-        alert("يرجى تسجيل الدخول مرة أخرى");
-        localStorage.removeItem("adminToken");
-        navigate("/");
-        return;
-      }
-      const response = await axios.get(
-        `/api/trips/${TripId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
-          },
-        }
+   
+      const response = await api.get(
+        `/trips/${tripId}`
       );
 
       console.log(response.data);
@@ -84,7 +73,7 @@ const TripDetails = () => {
     } finally {
       setLoading(false);
     }
-  }, [TripId, adminToken]);
+  }, [tripId]);
 
   // تحميل البيانات عند فتح الصفحة
   useEffect(() => {
@@ -131,19 +120,16 @@ const TripDetails = () => {
   }
 
   return (
-    <Box
+  <Box
       sx={{
         p: 4,
-       
       }}
     >
-    <Box 
-       sx={{ flexGrow: 1 }}
-      >   
-       <Grid container spacing={2}>
+    <Box  >   
+ <Grid container spacing={2}>
         <Grid size={6}>
-               {/* Hero Section */}
-      <Card
+         {/* Hero Section */}
+        <Card
         sx={{
           borderRadius: 5,
           overflow: "hidden",
@@ -154,6 +140,7 @@ const TripDetails = () => {
 
         {/* صورة الرحلة */}
         <Box
+
           component="img"
         // إذا الرحلة موجودة
         // وإذا الصور موجودة
@@ -167,6 +154,11 @@ const TripDetails = () => {
             width: "100%",
             height: 450,
             objectFit: "cover",
+            cursor: "pointer",
+            transition: "0.5s",
+            "&:hover": { transform: "scale(1.09)" },
+                
+                 
           }}
         />
 
@@ -224,17 +216,83 @@ const TripDetails = () => {
 
         </Box>
         
-      </Card>
+        </Card>
         </Grid>
+
+        {/* ////////////// Description ///////////////////// */}
+        
         <Grid size={6}>
-               {/* جدول موجز للحقول المطلوبة */}
-        <Card sx={{ m: 1 ,  borderRadius: 5,}}>
-            <CardContent sx={{ m: 3}}>
-              <Typography variant="subtitle1" fontWeight="bold" mb={1} >
-                معلومات  الرحلة 
+           <Card sx={{ borderRadius: "8px ", mb: 3 , height:"66vh"}}>
+            <CardContent     
+            sx={{
+              height: "100%",
+              overflowY: "auto",
+              boxSizing: "border-box",
+             }}>
+
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                sx={{color:"#7cb8d8" , fontFamily:"math"}}
+                mb={3}
+              >
+               
+              <Divider sx={{  padding:2}} > وصف الرحلة </Divider>
               </Typography>
-              <Table size="small">
-                <TableBody>
+                
+               <Divider />
+
+              <Typography
+                color="text.secondary"
+                lineHeight={2}
+                mb={2}
+                sx={{marginTop:3}}
+                
+              >
+                {trip?.description_ar}
+              </Typography>
+
+              {trip?.description_en && (
+                <Typography
+                  color="text.secondary"
+                  lineHeight={2}
+                >
+                  {trip.description_en}
+                </Typography>
+              )}
+
+            </CardContent>
+          </Card>
+        {/* ///////////////////////////////////// */}
+
+        </Grid>
+
+      </Grid>
+    </Box>
+
+      {/* ////////////////////////////////////////////// */}
+
+      {/* Main Content */}
+      <Grid container spacing={3}>
+
+        {/* Left */}
+        <Grid item xs={12} md={7}>
+        {/* جدول موجز للحقول المطلوبة */}
+
+        <Card sx={{ m: 1 ,  borderRadius: 5,}}>
+            <CardContent>
+              <Typography variant="subtitle1" fontWeight="bold" mb={1} variant="h4">
+              <Divider    sx={{color:"#7cb8d8" , fontFamily:"math" ,  padding:2}}> معلومات  الرحلة  </Divider>
+              </Typography>
+             
+              <Table size="medium" 
+              sx={{ 
+                  m: 1  ,
+                  boxShadow:2,
+                  borderRadius: 3,
+                  width:1000
+                 }}>
+                <TableBody >
                   <TableRow>
                     <TableCell sx={{ fontWeight: 'bold', width: 180 }}>Title (EN)</TableCell>
                     <TableCell>{trip?.title_en || '-'}</TableCell>
@@ -270,71 +328,23 @@ const TripDetails = () => {
                   label="Featured"
                   color="warning"  />
                   )}</TableCell>
+                   {/* ///////////////////////////////// */}
                    </TableRow>
-                 
 
                   
                 </TableBody>
               </Table>
             </CardContent>
-          </Card>
-
-        </Grid>
-      </Grid>
-    </Box>
-
-      {/* ////////////////////////////////////////////// */}
-
-      {/* Main Content */}
-      <Grid container spacing={3}>
-
-        {/* Left */}
-        <Grid item xs={12} md={7}>
-
-          {/* Description */}
-          <Card sx={{ borderRadius: 5, mb: 3 }}>
-            <CardContent>
-
-              <Typography
-                variant="h5"
-                fontWeight="bold"
-                mb={3}
-              >
-                وصف الرحلة
-              </Typography>
-
-              <Typography
-                color="text.secondary"
-                lineHeight={2}
-                mb={2}
-              >
-                {trip?.description_ar}
-              </Typography>
-
-              {trip?.description_en && (
-                <Typography
-                  color="text.secondary"
-                  lineHeight={2}
-                >
-                  {trip.description_en}
-                </Typography>
-              )}
-
-            </CardContent>
-          </Card>
-
-
+        </Card>
         </Grid>
 
         {/* Right */}
         <Grid item sx={{ borderRadius: 5, mb: 3 }}>
-      
           {/* معرض الصور */}
-          <CardContent>
+          <CardContent   >
               <TripGallery
                 trip={trip}
-                TripId={TripId}
-                adminToken={adminToken}
+                TripId={tripId}
                 getTrip={getTrip}
                 />
             </CardContent>
