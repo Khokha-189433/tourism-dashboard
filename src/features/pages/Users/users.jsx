@@ -81,10 +81,9 @@ export default function Users() {
     <Box component="main" sx={{}}>
       <Box
         display="flex"
-        justifycontent="space-between"
-        alignitems="center"
+        
         mb={30}
-        sx={{ marginBlockEnd:4}}
+        sx={{ marginBlockEnd:4 , justifyContent: "space-between", alignItems: "center" }}
       >
         <Typography variant="h4" fontWeight="bold" sx={{paddingBlockEnd:1}} >
            All Users

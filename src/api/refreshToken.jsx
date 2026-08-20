@@ -3,49 +3,69 @@ import axios from "axios";
 const api = axios.create({ baseURL: "/api" });
 
 const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) {
+    console.log("No refresh token available for refresh.");
+    return null;
+  }
+
   try {
-    const refreshToken = localStorage.getItem("refreshToken");
-    const response = await axios.post("/api/auth/refresh-token", { refreshToken });
-    const newAccessToken = response.data.access_token;
+    const response = await axios.post("/api/auth/refresh-token", {
+      refresh_token: refreshToken,
+    });
+
+    const newAccessToken = response.data?.data?.access_token ?? response.data?.access_token;
+
+    if (!newAccessToken) {
+      console.log("Refresh response did not contain a new access token.");
+      return null;
+    }
+
     localStorage.setItem("accessToken", newAccessToken);
     return newAccessToken;
   } catch (err) {
-    // localStorage.removeItem("accessToken");
-    // localStorage.removeItem("refreshToken");
-    // window.location.href = "/";
-     console.log("Refresh failed:", err.response?.data || err.message);
-      console.log("Refresh Error:", err.response?.status);
-      console.log("Refresh Data:", err.response?.data);
-     return null;
+    console.log("Refresh failed:", err.response?.data || err.message);
+    console.log("Refresh Error:", err.response?.status);
+    return null;
   }
 };
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
+    config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
-   }
+  }
   return config;
 });
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 &&  error.config  && !error.config._retry) {
-    error.config._retry = true;
+    const originalRequest = error.config;
 
-    const newAccessToken = await refreshAccessToken();
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
 
-    if (newAccessToken) {
-    error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-    return api(error.config);
-}
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    window.location.href = "/";
+      const newAccessToken = await refreshAccessToken();
+
+      if (newAccessToken) {
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return api(originalRequest);
+      }
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/";
     }
-      return Promise.reject(error);
- }
+
+    return Promise.reject(error);
+  }
 );
 
 export default api;

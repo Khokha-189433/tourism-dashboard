@@ -21,6 +21,7 @@ import ListItem from '@mui/material/ListItem';
 import {  useNavigate, useLocation } from 'react-router-dom';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LocalAirportRoundedIcon from '@mui/icons-material/LocalAirportRounded';
+import LocalHotelRoundedIcon from '@mui/icons-material/LocalHotelRounded';
 // استيراد أيقونة تسجيل الخروج
 import {grey} from '@mui/material/colors'
 import LogOut from '../../features/LogOut/LogOut';
@@ -89,7 +90,8 @@ function Sidebar({open ,handleDrawerClose }) {
     const array = [
       {text:"Dashboard", Icon : <InboxIcon /> , path:"/dashboard" } ,
       {text:"Users", Icon : <PeopleAltIcon /> , path:"/Users" } ,
-      {text:"Trips", Icon : <LocalAirportRoundedIcon /> , path:"/trips" }
+      {text:"Trips", Icon : <LocalAirportRoundedIcon /> , path:"/trips" } ,
+      {text:"Hotels", Icon : <LocalHotelRoundedIcon /> , path:"/Hotels" }
     ]
       const navgiate = useNavigate();
       const location = useLocation();

@@ -1,8 +1,10 @@
 ﻿import React, { useCallback, useEffect, useState } from 'react';
 import TripGallery from "../Trips/Images/TripGallery"
-
+import { Link } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
 import Divider from '@mui/material/Divider';
-
+import StatCard from '../../../components/UI/StartCard';
 import {
   Box,
   Button,
@@ -17,6 +19,7 @@ import {
   Grid,
   Stack,
   Typography,
+  
 } from "@mui/material";
  // icons
 import {
@@ -28,7 +31,7 @@ import {
 } from "@mui/icons-material";
 
 import api from '../../../api/refreshToken';
-   import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 const TripDetails = () => {
   
     //   // GET rip ID FROM LOCATION
@@ -59,11 +62,9 @@ const TripDetails = () => {
     }
    
     try {
-   
       const response = await api.get(
         `/trips/${tripId}`
       );
-
       console.log(response.data);
 
       setTrip(response.data.data || response.data);
@@ -119,240 +120,265 @@ const TripDetails = () => {
     );
   }
 
-  return (
-  <Box
-      sx={{
-        p: 4,
-      }}
-    >
-    <Box  >   
- <Grid container spacing={2}>
-        <Grid size={6}>
-         {/* Hero Section */}
-        <Card
+return (
+  <Box sx={{ minHeight: "100vh", py: 4 , padding:4 }}>
+    <Box sx={{ maxWidth: 1280, mx: "auto", padding:4 }}>
+
+      {/* ================= Header ================= */}
+
+      <Card
         sx={{
-          borderRadius: 5,
-          overflow: "hidden",
-          mb: 4,
-          position: "relative",
+          borderRadius: 4,
+          mb: 3,
+          boxShadow: "0 6px 18px rgba(0,0,0,.08)",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
-
-        {/* صورة الرحلة */}
-        <Box
-
-          component="img"
-        // إذا الرحلة موجودة
-        // وإذا الصور موجودة
-        // وإذا يوجد أول صورة  .[0]
-        // أعطني رابط الصورة
-       
-        src={
-            trip?.images?.[0]?.image_url   
-          }
-          sx={{
-            width: "100%",
-            height: 450,
-            objectFit: "cover",
-            cursor: "pointer",
-            transition: "0.5s",
-            "&:hover": { transform: "scale(1.09)" },
-                
-                 
-          }}
-        />
-
-        {/* Overlay */}
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            p: 4,
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
-            color: "white",
-          }}
-        >
-
-          
-          {/* معلومات  الموجودة في الصورة */}
-          <Stack
-            direction="row"
-            spacing={4}
-            mt={3}
-          >
-
-            <Stack direction="row" spacing={1}>
-              <LocationOn />
-              <Typography>
-                {trip?.destination?.name_ar}
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1}>
-              <CalendarMonth />
-              <Typography>
-                {trip?.duration_days} أيام
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1}>
-              <Group />
-              <Typography>
-                {trip?.max_participants} مشارك
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1}>
-              <MonetizationOn />
-              <Typography>
-                {trip?.price} {trip?.currency}
-              </Typography>
-            </Stack>
-
-          </Stack>
-
-        </Box>
-        
-        </Card>
-        </Grid>
-
-        {/* ////////////// Description ///////////////////// */}
-        
-        <Grid size={6}>
-           <Card sx={{ borderRadius: "8px ", mb: 3 , height:"66vh"}}>
-            <CardContent     
+        <CardContent>
+          <Box
             sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 2,
+            }}
+          >
+            <Box>
+              <Typography variant="h3" fontWeight="bold">
+                {trip?.title_ar}
+              </Typography>
+
+              <Typography variant="h5" color="text.secondary">
+                {trip?.title_en}
+              </Typography>
+
+              <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+                {trip?.status && (
+                  <Chip label={trip.status} color="success" />
+                )}
+
+                {trip?.is_featured && (
+                  <Chip label="Featured" color="warning" />
+                )}
+              </Box>
+            </Box>
+
+            <IconButton color="warning" component={Link}  to={`/EditTrip/${trip.id}`}>
+                    تعديل
+                    <EditIcon />
+            </IconButton>
+          
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* ================= الصورة + معلومات الرحلة ================= */}
+
+      <Grid container spacing={3}>
+
+        <Grid size={{ xs: 12, md: 7 }}>
+          <Card
+            sx={{
+              borderRadius: 4,
+              boxShadow: "0 6px 18px rgba(0,0,0,.08)",
+            }}
+          >
+            <Box
+              component="img"
+              src={trip?.images?.[0]?.image_url}
+              sx={{
+                width: "100%",
+                height: 430,
+                objectFit: "cover",
+                borderRadius: "16px 16px 0 0",
+              }}
+            />
+
+            <CardContent>
+              <TripGallery trip={trip} TripId={tripId} getTrip={getTrip} />
+            </CardContent>
+          </Card>
+        </Grid>
+    
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Card
+            sx={{
+              borderRadius: 4,
               height: "100%",
-              overflowY: "auto",
-              boxSizing: "border-box",
-             }}>
+              boxShadow: "0 6px 18px rgba(0,0,0,.08)",
+            }}
+          >
+            <CardContent>
 
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                sx={{color:"#7cb8d8" , fontFamily:"math"}}
-                mb={3}
-              >
-               
-              <Divider sx={{  padding:2}} > وصف الرحلة </Divider>
+              <Typography variant="h6" color="primary" mb={3}>
+                معلومات الرحلة
               </Typography>
-                
-               <Divider />
+              <Divider sx={{ mb: 3 , mx: 3 }} />
+              <StatCard title="العنوان بالعربي " value={trip?.title_ar} />
+              <StatCard title="العنوان بالإنجليزية" value={trip?.title_en} />
 
-              <Typography
-                color="text.secondary"
-                lineHeight={2}
-                mb={2}
-                sx={{marginTop:3}}
-                
-              >
-                {trip?.description_ar}
-              </Typography>
+              <StatCard
+                title="الوصف المختصر"
+                value={trip?.short_description_ar}
+              />
 
-              {trip?.description_en && (
-                <Typography
-                  color="text.secondary"
-                  lineHeight={2}
-                >
-                  {trip.description_en}
-                </Typography>
-              )}
+              <StatCard
+                title="الفئة"
+                value={trip?.Category?.name_ar}
+              />
+
+              <StatCard
+                title="الوجهة"
+                value={trip?.Destination?.name_ar}
+              />
 
             </CardContent>
           </Card>
-        {/* ///////////////////////////////////// */}
-
         </Grid>
 
       </Grid>
-    </Box>
 
-      {/* ////////////////////////////////////////////// */}
+      {/* ================= السعر والإحصائيات ================= */}
 
-      {/* Main Content */}
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ mt: 4 }}>
 
-        {/* Left */}
-        <Grid item xs={12} md={7}>
-        {/* جدول موجز للحقول المطلوبة */}
-
-        <Card sx={{ m: 1 ,  borderRadius: 5,}}>
+        <Grid size={{ xs: 12, md: 8  }}>
+          <Card
+            sx={{
+              borderRadius: 4,
+              boxShadow: "0 6px 18px rgba(0,0,0,.08)",
+            }}
+          >
             <CardContent>
-              <Typography variant="subtitle1" fontWeight="bold" mb={1} variant="h4">
-              <Divider    sx={{color:"#7cb8d8" , fontFamily:"math" ,  padding:2}}> معلومات  الرحلة  </Divider>
+
+              <Typography variant="h6" color="primary" mb={3}>
+                تفاصيل الحجز
               </Typography>
-             
-              <Table size="medium" 
-              sx={{ 
-                  m: 1  ,
-                  boxShadow:2,
-                  borderRadius: 3,
-                  width:1000
-                 }}>
-                <TableBody >
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', width: 180 }}>Title (EN)</TableCell>
-                    <TableCell>{trip?.title_en || '-'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', width: 180 }}>Title (AR)</TableCell>
-                    <TableCell>{trip?.title_ar || '-'}</TableCell>
-                  </TableRow>
+           <Divider sx={{ mb: 3 , mx: 3 }} />
+              <Grid container spacing={2}>
 
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Short Description (AR)</TableCell>
-                    <TableCell>{trip?.short_description_ar || '-'}</TableCell>
-                  </TableRow>
+                <Grid size={{ xs: 6, md: 3 }}>
+                  <StatCard
+                    icon={<MonetizationOn color="primary" />}
+                    title="السعر"
+                    value={`${trip?.price} ${trip?.currency}`}
+                  />
+                </Grid>
 
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Short Description (EN)</TableCell>
-                    <TableCell>{trip?.short_description_en || '-'}</TableCell>
-                  </TableRow>
+                <Grid size={{ xs: 6, md: 3 }}>
+                  <StatCard
+                    icon={<CalendarMonth color="primary" />}
+                    title="المدة"
+                    value={`${trip?.duration_days} أيام`}
+                  />
+                </Grid>
 
-                 <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>status</TableCell>
-                  <TableCell>{trip?.status && (
-                   <Chip
-                   label={trip.status}
-                   color="success" />
-                   )}</TableCell>
-                 </TableRow>
+                <Grid size={{ xs: 6, md: 3 }}>
+                  <StatCard
+                    icon={<Group color="primary" />}
+                    title="المشاركون"
+                    value={trip?.max_participants}
+                  />
+                </Grid>
 
-                  <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>status</TableCell>
-                  <TableCell>{trip?.is_featured && (
-                  <Chip
-                  label="Featured"
-                  color="warning"  />
-                  )}</TableCell>
-                   {/* ///////////////////////////////// */}
-                   </TableRow>
+                <Grid size={{ xs: 6, md: 3 }}>
+                  <StatCard
+                    icon={<LocationOn color="primary" />}
+                    title="الانطلاق"
+                    value={trip?.departure_location_ar}
+                  />
+                </Grid>
 
-                  
-                </TableBody>
-              </Table>
+              </Grid>
+
             </CardContent>
-        </Card>
+          </Card>
         </Grid>
 
-        {/* Right */}
-        <Grid item sx={{ borderRadius: 5, mb: 3 }}>
-          {/* معرض الصور */}
-          <CardContent   >
-              <TripGallery
-                trip={trip}
-                TripId={tripId}
-                getTrip={getTrip}
-                />
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card
+            sx={{
+              borderRadius: 4,
+              height: "100%",
+              boxShadow: "0 6px 18px rgba(0,0,0,.08)",
+            }}
+          >
+            <CardContent>
+
+              <Typography variant="h6" color="primary" mb={3}>
+                السعر الحالي
+              </Typography>
+             <Divider sx={{ mb: 3 , mx: 3 }} />
+              <Box
+                sx={{
+                  bgcolor: "background.paper",
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 3,
+                  textAlign: "center",
+                  p: 3,
+                }}
+              >
+                <Typography variant="h3" color="primary" fontWeight="bold">
+                  {trip?.price}
+                </Typography>
+
+                <Typography>{trip?.currency}</Typography>
+
+                {trip?.discount_price && (
+                  <Typography
+                    sx={{
+                      textDecoration: "line-through",
+                      color: "text.secondary",
+                      mt: 1,
+                    }}
+                  >
+                    {trip.discount_price}
+                  </Typography>
+                )}
+              </Box>
+
             </CardContent>
+          </Card>
         </Grid>
 
       </Grid>
+
+      {/* ================= وصف الرحلة ================= */}
+
+      <Card sx={{ borderRadius: 4, mt: 3 }}>
+        <CardContent>
+       
+          <Typography variant="h6" color="primary" mb={3}>
+            وصف الرحلة
+          </Typography>
+          <Divider sx={{ mb: 3 , mx: 3 }} />
+          <Typography color="text.secondary"  sx={{ lineHeight: 2 }}>
+            {trip?.description_ar}
+          </Typography>
+
+          {trip?.description_en && (
+            <>
+           
+
+              <Typography color="text.secondary" sx={{ lineHeight: 2 }}>
+                {trip.description_en}
+              </Typography>
+            </>
+          )}
+
+        </CardContent>
+      </Card>
+
+
+
     </Box>
-  );
+  </Box>
+);
 };
 
 export default TripDetails;
+
+

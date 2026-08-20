@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import api from "../../../api/refreshToken"
+import api from "../../../../api/refreshToken"
 import { useLocation } from "react-router-dom";
-
+import EditUser from "./EditUser";
 // =========================
 // MUI COMPONENTS
 // =========================
@@ -18,11 +18,11 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
+  // Dialog,
+  // DialogActions,
+  // DialogContent,
+  // DialogTitle,
+  // TextField,
   Alert,
 } from "@mui/material";
 
@@ -61,12 +61,6 @@ export default function User() {
 
   // فتح وإغلاق نافذة التعديل
   const [openEdit, setOpenEdit] = useState(false);
-
-  // بيانات الفورم الخاصة بالتعديل
-  const [formData, setFormData] = useState({
-    role: "",
-    is_active: true,
-  });
 
   // ======================================================================
   // GET USER ID FROM LOCATION
@@ -128,61 +122,28 @@ export default function User() {
   }, [userId]);
 
   // ======================================================================
-  // OPEN EDIT DIALOG
+  // OPEN EDIT DIALOG  // دالة تحديث المستخدم بعد نجاح التعديل
   // ======================================================================
-
+  
   const handleEditClick = () => {
     if (!user) {
       return;
     }
-
-    // تعبئة الفورم ببيانات المستخدم الحالية
-    setFormData({
-      role: user.role || "",
-      is_active: Boolean(user.is_active),
-    });
 
     // فتح نافذة التعديل
     setOpenEdit(true);
   };
 
   // ======================================================================
-  // UPDATE USER
+  // HANDLE UPDATED USER DATA FROM EDIT DIALOG
   // ======================================================================
-
-  const handleUpdateUser = async () => {
-
-    try {
-       console.log("Before request");
-      // إرسال PUT REQUEST لتحديث المستخدم
-      const response = await api.put(
-        `/admin/users/${userId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("After request");
-      // تخزين البيانات الجديدة بعد التعديل
-      setUser(response.data.data);
-
-      // إغلاق نافذة التعديل
-      setOpenEdit(false);
-
-      // رسالة نجاح
-      alert("User Updated Successfully");
-      
-    } catch (err) {
-
-      console.error("Update Error:", err);
-
-      alert(
-        err?.response?.data?.message ||
-        "Error Updating User"
-      );
+  const handleUserUpdated = (updatedUser) => {
+    if (!updatedUser) {
+      return;
     }
+
+    setUser(updatedUser);
+    setOpenEdit(false);
   };
 
   if (!userId) {
@@ -193,15 +154,6 @@ export default function User() {
     );
   }
 
-  // if (!a) {
-  //   return (
-  //     <Box sx={{ p: 5 }}>
-  //       <Alert severity="error">
-  //         Admin token is missing. Please log in again.
-  //       </Alert>
-  //     </Box>
-  //   );
-  // }
 
   // ======================================================================
   // LOADING SCREEN
@@ -374,6 +326,7 @@ export default function User() {
                     sx={{
                       cursor: "pointer",
                     }}
+                    // //////////////////////////////////////////////////////////////////////////////////
                     onClick={handleEditClick}
                   />
 
@@ -391,86 +344,15 @@ export default function User() {
         {/* EDIT DIALOG */}
         {/* ====================================================================== */}
 
-        <Dialog
-          open={openEdit}
-          onClose={() => setOpenEdit(false)}
-        >
-
-          {/* عنوان النافذة */}
-          <DialogTitle>
-            Edit User
-          </DialogTitle>
-
-          {/* محتوى النافذة */}
-          <DialogContent>
-
-            {/* ========================= */}
-            {/* ROLE */}
-            {/* ========================= */}
-
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Role"
-              // القيمة الحالية
-              value={formData.role}
-
-              // تحديث القيمة
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  role: e.target.value,
-                })
-              }
-            />
-
-            {/* ========================= */}
-            {/* IS ACTIVE */}
-            {/* ========================= */}
-
-            <TextField
-              select
-              fullWidth
-              margin="normal"
-              label="Status"
-              value={formData.is_active ? "true" : "false"}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  is_active: e.target.value === "true",
-                })
-              }
-            >
-              <MenuItem value="true">Active</MenuItem>
-              <MenuItem value="false">Inactive</MenuItem>
-            </TextField>
-
-          </DialogContent>
-
-          {/* ========================= */}
-          {/* DIALOG BUTTONS */}
-          {/* ========================= */}
-
-          <DialogActions>
-
-            {/* زر الإلغاء */}
-            <Button
-              onClick={() => setOpenEdit(false)}
-            >
-              Cancel
-            </Button>
-
-            {/* زر الحفظ */}
-            <Button
-              variant="contained"
-              onClick={handleUpdateUser}
-            >
-              Save
-            </Button>
-
-          </DialogActions>
-
-        </Dialog>
+       
+        <EditUser
+            key={`${openEdit}-${user?.id ?? "new"}`}
+            open={openEdit}
+            handleClose={() => setOpenEdit(false)}
+            user={user}
+            userId={userId}
+            onUserUpdated={handleUserUpdated}
+        />
 
       </Box>
     </>

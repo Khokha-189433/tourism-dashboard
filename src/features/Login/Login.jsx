@@ -20,7 +20,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  console.log(loading)
+ 
   const navigate = useNavigate();
   
   const Submit = async (e) => {
@@ -104,11 +104,16 @@ navigate("/dashboard");
                 />
 
               </div>
-
               {/* Button */}
               <div className="input ">
-                <Stack   >
-                  <Button  sx={{background:' rgba(14, 13, 34, 0.253)'}} type="submit ">  Submit  </Button>
+                <Stack>
+                  <Button
+                    sx={{ background: 'rgba(14, 13, 34, 0.253)' }}
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading ? "Loading..." : "Submit"}
+                  </Button>
                 </Stack>
               </div>
             </form>

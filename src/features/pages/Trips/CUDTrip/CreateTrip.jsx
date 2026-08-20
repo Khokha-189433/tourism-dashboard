@@ -52,9 +52,10 @@ const CreateTrip = () => {
     is_featured: false,
   });
 
-
   // تغيير القيم
   const handleChange = (e) => {
+    //    اذا كان العنصر من نوع type="checkbox" => استخدم checked، وإلا استخدم value في حالة العناصر الأخرى مثل النصوص والأرقام. 
+    // تعتبر ال name هي المفتاح الذي يحدد أي حقل من formData سيتم تحديثه، بينما value أو checked هو القيمة الجديدة التي سيتم تعيينها لهذا الحقل.
     const { name, value, checked, type } = e.target;
 
     setFormData({
@@ -171,7 +172,7 @@ const CreateTrip = () => {
 
           <Grid container spacing={3}>
             {/* عنوان عربي */}
-            <Grid item xs={12} md={6}>
+            <Grid  xs={12} md={6}>
               <TextField
                 fullWidth
                 label="عنوان الرحلة بالعربي"
@@ -182,7 +183,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* عنوان إنجليزي */}
-            <Grid item xs={12} md={6}>
+            <Grid  xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Trip Title English"
@@ -193,7 +194,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* وصف قصير عربي */}
-            <Grid item xs={12}>
+            <Grid  xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -206,7 +207,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* وصف قصير إنجليزي */}
-            <Grid item xs={12}>
+            <Grid  xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -219,7 +220,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* وصف عربي */}
-            <Grid item xs={12}>
+            <Grid  xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -232,7 +233,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* وصف إنجليزي */}
-            <Grid item xs={12}>
+            <Grid  xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -245,7 +246,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* السعر */}
-            <Grid item xs={12} md={4}>
+            <Grid  xs={12} md={4}>
               <TextField
                 fullWidth
                 type="number"
@@ -257,7 +258,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* سعر الخصم */}
-            <Grid item xs={12} md={4}>
+            <Grid  xs={12} md={4}>
               <TextField
                 fullWidth
                 type="number"
@@ -269,7 +270,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* العملة */}
-            <Grid item xs={12} md={4}>
+            <Grid  xs={12} md={4}>
               <TextField
                 select
                 fullWidth
@@ -284,7 +285,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* مدة الرحلة */}
-            <Grid item xs={12} md={6}>
+            <Grid  xs={12} md={6}>
               <TextField
                 fullWidth
                 type="number"
@@ -296,7 +297,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* عدد المشاركين */}
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <TextField
                 fullWidth
                 type="number"
@@ -307,38 +308,9 @@ const CreateTrip = () => {
               />
             </Grid>
 
-            {/* تاريخ البداية */}
-            {/* <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                type="date"
-                label="تاريخ البداية"
-                name="start_date"
-                value={formData.start_date}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid> */}
-
-            {/* تاريخ النهاية */}
-            {/* <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                type="date"
-                label="تاريخ النهاية"
-                name="end_date"
-                value={formData.end_date}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid> */}
              
                 {/* status */}
-            <Grid item xs={12} md={4}>
+            <Grid  xs={12} md={4}>
               <TextField
                 select
                 fullWidth
@@ -354,7 +326,7 @@ const CreateTrip = () => {
 
              
             {/* الرحلة المميزة */}
-            <Grid item xs={12}>
+            <Grid  xs={12}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -368,7 +340,7 @@ const CreateTrip = () => {
             </Grid>
 
             {/* زر الحفظ */}
-            <Grid item xs={12}>
+            <Grid  xs={12}>
               <Button
                 variant="contained"
                 size="large"

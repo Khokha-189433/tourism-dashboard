@@ -24,16 +24,15 @@ import {
 import { useTheme } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Alert from '@mui/material/Alert';
-import { deleteTrip } from "./CUDTrip/DeleteTrip";
+import DeleteButton from "../../../components/UI/DeleteButton";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../../../api/refreshToken";
-
+import isArabic from "../../Translate/Translation";
 
 const categories = ["تاريخية", "طبيعية", "دينية", "مغامرات"];
 const statuses = ["published", "draft"];
@@ -71,8 +70,9 @@ export default function TripsTable() {
        if (filterValues.status) params.append("status", filterValues.status);
        if (filterValues.minPrice) params.append("min_price", filterValues.minPrice);
        if (filterValues.maxPrice) params.append("max_price", filterValues.maxPrice);
-
+    //    لايحظ: إذا لم يتم تمرير أي فلاتر، سيتم تحميل جميع الرحلات
        const response = await api.get(`/trips?${params.toString()}`);
+      //  لعرض الرحلات في الجدول
        setTrips(response.data.data || response.data || []);
      } catch (err) {
        console.error("Error fetching trips:", err);
@@ -142,45 +142,28 @@ export default function TripsTable() {
 
   if (error) {
     return (
-      <Box display="flex" justifycontent="center" mt={5}>
+    <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
         <Typography color="error">{error}</Typography>
       </Box>
     );
   }
     ////////////////////////////////////////
-    const handleDeleteTrip = async (tripId) => {
-  if (!window.confirm("هل أنت متأكد من حذف الرحلة؟")) return;
-
-      try {
-        await deleteTrip(tripId);
-
-        await loadTrips(filters);
-
-        alert("تم حذف الرحلة بنجاح");
-      } catch (err) {
-        console.error(err);
-        alert("حدث خطأ أثناء حذف الرحلة");
-      }
-      };
     ///////////////////////////////////////
 
   return (
     <Box p={30}>
-      {/* Header */}
+     {/* Header */} 
       <Box
         display="flex"
-        justifyContent="space-between"
+       
         mb={30}
-        sx={{ marginBlockEnd:4}}
+        sx={{ marginBlockEnd:4, justifyContent: "space-between", alignItems: "center" }}
       >
         <Typography variant="h4" fontWeight="bold">
           إدارة الرحلات
         </Typography>
         <Divider />
         {/*  */}
-
-
-
 
 
         {/*  */}
@@ -207,8 +190,8 @@ export default function TripsTable() {
       {/* واجهة الفلاتر */}
       <Card sx={{ p: 2, mb: 3, borderRadius: 5 , border:'1px solid #b0a3a399' }}>
         <Typography variant="h6" mb={2}>فلترة الرحلات</Typography>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={4}>
+        <Grid container spacing={2} sx={{alignItems:"center"}}>
+          <Grid  xs={12} md={4}>
             <TextField
               fullWidth
               name="search"
@@ -221,33 +204,33 @@ export default function TripsTable() {
                     <SearchIcon />
                   </InputAdornment>
                 ),
-              }}
+              }} 
             />
           </Grid>
       
-          <Grid item xs={12} md={2}>
+          <Grid  xs={12} md={2}>
             <TextField select fullWidth name="category" label="التصنيف" value={filters.category} onChange={handleFilterChange}>
               <MenuItem value="">الكل</MenuItem>
               {categories.map((c) => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
             </TextField>
           </Grid>
 
-          <Grid item xs={12} md={2}>
+          <Grid  xs={12} md={2}>
             <TextField select fullWidth name="status" label="الحالة" value={filters.status} onChange={handleFilterChange}>
               <MenuItem value="">الكل</MenuItem>
               {statuses.map((s) => (<MenuItem key={s} value={s}>{s}</MenuItem>))}
             </TextField>
           </Grid>
 
-          <Grid item xs={6} md={2}>
+          <Grid  xs={6} md={2}>
             <TextField fullWidth type="number" name="minPrice" label="أقل سعر" value={filters.minPrice} onChange={handleFilterChange} />
           </Grid>
 
-          <Grid item xs={6} md={2}>
+          <Grid  xs={6} md={2}>
             <TextField fullWidth type="number" name="maxPrice" label="أعلى سعر" value={filters.maxPrice} onChange={handleFilterChange} />
           </Grid>
 
-          <Grid item xs={12} md={12}>
+          <Grid  xs={12} md={12}>
             <Box display="flex" gap={2} mt={1}>
               <Button variant="contained" startIcon={<FilterAltIcon />} onClick={applyFilters} sx={{margin:2}}>تطبيق الفلاتر</Button>
               <Button variant="outlined" onClick={resetFilters}>إعادة تعيين</Button>
@@ -281,16 +264,16 @@ export default function TripsTable() {
 
               }}
             >
-           <TableCell> 	Title_En  </TableCell>
-           <TableCell> 	Title_Ar  </TableCell>
-              <TableCell>	Price </TableCell>
-              <TableCell>Duration_day</TableCell>
+          
+           <TableCell> عنوان الرحلة   </TableCell>
+              <TableCell>	السعر  </TableCell>
+              <TableCell> المدة باليوم</TableCell>
  
-              <TableCell>status</TableCell>
-              <TableCell> Is_featured </TableCell>
+              <TableCell>الحالة  </TableCell>
+              <TableCell> هل الرحلة مميزة </TableCell>
               
               <TableCell align="center">
-                  Button
+                  الزر 
               </TableCell>
             </TableRow>
           </TableHead>
@@ -300,13 +283,10 @@ export default function TripsTable() {
             {trips.map((trip) => (
               <TableRow key={trip.id} hover>
                 <TableCell>
-                  {trip.title_en}
+                 {isArabic ? trip.title_ar || trip.title_en : trip.title_en || trip.title_ar}
                 </TableCell>
-                <TableCell>
-                  {trip.title_ar}
-                </TableCell>
-                <TableCell>
-                 
+              
+                <TableCell>  
                    {trip.price}
                    {trip.currency}
                 </TableCell>
@@ -341,17 +321,21 @@ export default function TripsTable() {
                     <EditIcon />
                   </IconButton>
 
-                  <IconButton color="error"  
-                  onClick={() => handleDeleteTrip(trip.id)
-                  }>
-                    <DeleteIcon />
-                  </IconButton>
+                  <DeleteButton
+                    endpoint={`/trips/${trip.id}`}
+                    itemId={trip.id}
+                    onDeleted={() => loadTrips(filters)}
+                    confirmationMessage="هل أنت متأكد من حذف الرحلة؟"
+                    successMessage="تم حذف الرحلة بنجاح"
+                    errorMessage="حدث خطأ أثناء حذف الرحلة"
+                  />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      {/*  عرض رسالة لاضافة رحلة  */}
       <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
         <Alert
           onClose={handleSnackbarClose}
