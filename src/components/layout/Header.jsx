@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import {Tooltip } from "@mui/material";
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import MuiAppBar from '@mui/material/AppBar';
+
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
@@ -14,6 +16,11 @@ import Person2Outlined from '@mui/icons-material/Person2Outlined';
 import Sidebar from './Sidebar';
 import { Outlet } from 'react-router-dom';
 import ColorModeContext from '../../contexts/ColorModeContext';
+////////////////////////translateService//////////////////////////
+import LanguageIcon from "@mui/icons-material/Language";
+import { useTranslation } from "react-i18next";
+
+
 
 const drawerWidth = 240;
 
@@ -44,6 +51,26 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export default function Header() {
+
+
+  const { i18n, t } = useTranslation();
+
+  const changeLanguage = () => {
+    const newLang =
+      i18n.language === "ar"
+        ? "en"
+        : "ar";
+
+    i18n.changeLanguage(newLang);
+
+    localStorage.setItem("lang", newLang);
+  };
+
+
+
+
+
+ /////////////////////////////
   const theme = useTheme();
   const colorMode = React.useContext(ColorModeContext);
   const [open, setOpen] = React.useState(false);
@@ -72,10 +99,6 @@ export default function Header() {
               <MenuIcon />
             </IconButton>
 
-            <Typography variant="h6" noWrap component="div">
-              Welcome to dashboard
-            </Typography>
-
             <Box sx={{ flexGrow: 1 }} />
 
             <Stack direction="row" spacing={1} alignitems="center">
@@ -90,6 +113,25 @@ export default function Header() {
                 <Person2Outlined />
               </IconButton>
             </Stack>
+          {/* //// */}
+        <Typography
+          variant="h6"
+          sx={{ flexGrow: 1 }}
+        >
+          {t("welcome")}
+        </Typography>
+
+        <Tooltip title={t("language")}>
+          <IconButton
+            color="inherit"
+            onClick={changeLanguage}
+          >
+            <LanguageIcon />
+          </IconButton>
+        </Tooltip>
+
+
+          {/* //// */}
           </Toolbar>
         </AppBar>
 

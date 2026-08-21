@@ -13,6 +13,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import api from "../../api/refreshToken";
+import { useTranslation } from "react-i18next";
 //////////
 
 
@@ -20,6 +21,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
  
   const navigate = useNavigate();
   
@@ -68,10 +70,10 @@ navigate("/dashboard");
           <CardContent style={{ margin: "4rem" }} >
             {/* Logo / Title */}
             <Typography gutterBottom sx={{ color: ' rgb(152, 172, 173)', fontSize: 30  , width:400}}>
-              🌍 Tourism Admin
+              🌍 {t("tourismAdmin")}
             </Typography>
             <Typography gutterBottom sx={{  fontSize: 19 , width:400 , color: ' rgb(115, 117, 117)'}}>
-              Welcome back, please login
+              {t("welcomeBack")}
             </Typography>
             {/*..............Form ..................*/}
             <form onSubmit={Submit} >
@@ -80,7 +82,7 @@ navigate("/dashboard");
               <div className="input ">
                 <TextField
                   id="outlined-basic"
-                  label="Email"
+                  label={t("email")}
                   variant="outlined"
                   type="email"
                   value={email}
@@ -96,7 +98,7 @@ navigate("/dashboard");
                 <TextField
                   id=""
                   type="password"
-                  label="password"
+                  label={t("password")}
                   variant="outlined"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -112,7 +114,7 @@ navigate("/dashboard");
                     type="submit"
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : "Submit"}
+                    {loading ? t("loading") : t("submit")}
                   </Button>
                 </Stack>
               </div>

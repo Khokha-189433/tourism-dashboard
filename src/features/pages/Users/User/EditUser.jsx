@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "../../../../api/refreshToken"
+import { useTranslation } from "react-i18next";
 
 import {
   Button,
@@ -18,6 +19,7 @@ export default function EditUser({
   userId,
   onUserUpdated,
 }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState(() => ({
     role: user?.role || "",
     is_active: Boolean(user?.is_active ?? true),
@@ -44,20 +46,20 @@ export default function EditUser({
 
       handleClose();
 
-      alert("User Updated Successfully");
+      alert(t("userUpdated"));
     } catch (err) {
       console.error(err);
 
       alert(
         err?.response?.data?.message ||
-          "Error Updating User"
+          t("userUpdateError")
       );
     }
   };
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Edit User</DialogTitle>
+      <DialogTitle>{t("editUser")}</DialogTitle>
 
       <DialogContent>
 
@@ -66,7 +68,7 @@ export default function EditUser({
     select
     fullWidth
     margin="normal"
-    label="Role"
+    label={t("role")}
     value={formData.role}
     onChange={(e) =>
       setFormData({
@@ -75,9 +77,9 @@ export default function EditUser({
       })
     }
   >
-    <MenuItem value="admin">Admin</MenuItem>
-    <MenuItem value="employee">Employee</MenuItem>
-    <MenuItem value="customer">Customer</MenuItem>
+    <MenuItem value="admin">{t("admin")}</MenuItem>
+    <MenuItem value="employee">{t("employee")}</MenuItem>
+    <MenuItem value="customer">{t("customer")}</MenuItem>
   </TextField>
 
   {/* حالة الحساب */}
@@ -85,7 +87,7 @@ export default function EditUser({
     select
     fullWidth
     margin="normal"
-    label="Status"
+    label={t("status")}
     value={formData.is_active ? "true" : "false"}
     onChange={(e) =>
       setFormData({
@@ -94,21 +96,21 @@ export default function EditUser({
       })
     }
   >
-    <MenuItem value="true">Active</MenuItem>
-    <MenuItem value="false">Inactive</MenuItem>
+    <MenuItem value="true">{t("active")}</MenuItem>
+    <MenuItem value="false">{t("inactive")}</MenuItem>
   </TextField>
 
  </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>
-          Cancel
+          {t("cancel")}
         </Button>
 
         <Button
           variant="contained"
           onClick={handleUpdateUser}
         >
-          Save
+          {t("save")}
         </Button>
       </DialogActions>
     </Dialog>

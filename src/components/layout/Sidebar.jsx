@@ -22,9 +22,11 @@ import {  useNavigate, useLocation } from 'react-router-dom';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LocalAirportRoundedIcon from '@mui/icons-material/LocalAirportRounded';
 import LocalHotelRoundedIcon from '@mui/icons-material/LocalHotelRounded';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 // استيراد أيقونة تسجيل الخروج
 import {grey} from '@mui/material/colors'
 import LogOut from '../../features/LogOut/LogOut';
+import { useTranslation } from 'react-i18next';
 
 const drawerWidth = 240;
 
@@ -87,11 +89,14 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 function Sidebar({open ,handleDrawerClose }) {
+    const { t } = useTranslation();
     const array = [
-      {text:"Dashboard", Icon : <InboxIcon /> , path:"/dashboard" } ,
-      {text:"Users", Icon : <PeopleAltIcon /> , path:"/Users" } ,
-      {text:"Trips", Icon : <LocalAirportRoundedIcon /> , path:"/trips" } ,
-      {text:"Hotels", Icon : <LocalHotelRoundedIcon /> , path:"/Hotels" }
+      {text:t("dashboard"), Icon : <InboxIcon /> , path:"/dashboard" } ,
+      {text:t("users"), Icon : <PeopleAltIcon /> , path:"/Users" } ,
+      {text:t("trips"), Icon : <LocalAirportRoundedIcon /> , path:"/trips" } ,
+      {text:t("hotels"), Icon : <LocalHotelRoundedIcon /> , path:"/Hotels" } , 
+       {text:t("destinations"), Icon : <LocationOnOutlinedIcon /> , path:"/Destinations" },
+
     ]
       const navgiate = useNavigate();
       const location = useLocation();
@@ -125,16 +130,18 @@ function Sidebar({open ,handleDrawerClose }) {
                 </ListItemIcon>
                 <ListItemText 
                 primary={Item.text}
-                 sx={{color :"rgb(132, 173, 201)"  }} 
                   sx={[
-                                        open
-                                            ? {
-                                                opacity: 1,
-                                            }
-                                            : {
-                                                opacity: 0,
-                                            },
-                                    ]  }
+                    {
+                      color: "rgb(132, 173, 201)"
+                    },
+                    open
+                      ? {
+                          opacity: 1,
+                        }
+                        : {
+                          opacity: 0,
+                        },
+                  ]}
                  />
               </ListItemButton>
             </ListItem>

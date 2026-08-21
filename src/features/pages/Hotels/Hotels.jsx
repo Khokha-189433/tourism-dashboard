@@ -15,18 +15,15 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
-import StarIcon from '@mui/icons-material/Star';
-import Chip from '@mui/material/Chip';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import { useState, useEffect } from 'react';
 import api from '../../../api/refreshToken';
 import CircularProgress from '@mui/material/CircularProgress';
 import Rating from "@mui/material/Rating";
-import isArabic from '../../Translate/Translation';
 import DeleteHotel from './CUD_Hotels/DeletHotel';
+import { useTranslation } from 'react-i18next';
 export default function Hotels() { 
 const theme = useTheme();
+const { i18n, t } = useTranslation();
 const [hotels, setHotels] = useState([]);
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
@@ -43,7 +40,7 @@ useEffect(() => {
       setHotels(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-      setError('فشل تحميل الفنادق');
+      setError(t('fetchHotelsError'));
     } finally {
       setLoading(false);
     }
@@ -73,7 +70,7 @@ const handleHotelDeleted = (hotelId) => {
   }
 
   return (
-    <Box p={30}>
+    <Box  p={30}>
            {/* Header */} 
       <Box
         display="flex"
@@ -82,7 +79,7 @@ const handleHotelDeleted = (hotelId) => {
         sx={{ marginBlockEnd:4, justifycontent: "space-between", alignItems: "center" }}
       >
         <Typography variant="h4" fontWeight="bold">
-          إدارة الفنادق
+          {t("manageHotels")}
         </Typography>
         <Divider />
   
@@ -104,7 +101,7 @@ const handleHotelDeleted = (hotelId) => {
             color: theme.palette.mode === "dark" ? "#fff" : "#000",     
           }}
         >
-         إضافة فندق
+         {t("addHotel")}
         </Button>
       
     
@@ -134,18 +131,18 @@ const handleHotelDeleted = (hotelId) => {
 
               }}
             >
-           <TableCell> الصورة  </TableCell>
-           <TableCell> 	اسم الفندق  </TableCell>
-              <TableCell>	الوجهة </TableCell>
-              <TableCell>التقييم بالنجوم</TableCell>
+            <TableCell>{t("image")}</TableCell>
+            <TableCell>{t("name")}</TableCell>
+              <TableCell>{t("destination")}</TableCell>
+              <TableCell>{t("rating")}</TableCell>
  
-              <TableCell> السعر لليلة</TableCell>
-              <TableCell> الوصف </TableCell>
-              <TableCell> العنوان </TableCell>
+              <TableCell>{t("pricePerNight")}</TableCell>
+              <TableCell>{t("description")}</TableCell>
+              <TableCell>{t("address")}</TableCell>
             
                  
               <TableCell align="center">
-                  Button
+                  {t("actions")}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -176,18 +173,20 @@ const handleHotelDeleted = (hotelId) => {
                         color: 'text.secondary',
                       }}
                     >
-                      لا توجد صورة
+                      {t("noImage")}
                     </Box>
                   )}
                 </TableCell>
                  {/*  اسم الفندق  */}
                 <TableCell>
-                  {isArabic ? hotel.name_ar || hotel.name_en : hotel.name_en || hotel.name_ar}
+                  {i18n.language === "ar"
+                    ? hotel.name_ar || hotel.name_en
+                    : hotel.name_en || hotel.name_ar}
                 </TableCell>
                  {/*  الى اين متوجهين  */}
                 <TableCell>
                   {hotel?.Destination
-                      ? (isArabic
+                      ? (i18n.language === "ar"
                           ? hotel.Destination.name_ar || hotel.Destination.name_en
                           : hotel.Destination.name_en || hotel.Destination.name_ar)
                       : "-"}
@@ -208,11 +207,15 @@ const handleHotelDeleted = (hotelId) => {
                 </TableCell>
                  {/* شرح بسيط عن الفندق */}
                 <TableCell>
-                  {isArabic ? hotel.short_description_ar || hotel.description_ar || '-' : hotel.short_description_en || hotel.description_en || '-'}
+                  {i18n.language === "ar"
+                    ? hotel.short_description_ar || hotel.description_ar || '-'
+                    : hotel.short_description_en || hotel.description_en || '-'}
                 </TableCell>
                  {/* عنوان الفندق */}
                 <TableCell>
-                  {isArabic ? hotel.address_ar || hotel.address_en || '-' : hotel.address_en || hotel.address_ar || '-'}
+                  {i18n.language === "ar"
+                    ? hotel.address_ar || hotel.address_en || '-'
+                    : hotel.address_en || hotel.address_ar || '-'}
                   {hotel.address || hotel.location || '-'}
                 </TableCell>
                   {/*  الازرار */}

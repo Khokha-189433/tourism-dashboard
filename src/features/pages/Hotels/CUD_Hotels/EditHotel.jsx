@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Box, Button, TextField, CircularProgress } from "@mui/material";
 import api from "../../../../api/refreshToken";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function EditHotel() {
   const navigate = useNavigate();
   const { hotelId } = useParams();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(true);
 
@@ -27,14 +29,14 @@ export default function EditHotel() {
         });
       } catch (error) {
         console.error(error);
-        alert("فشل في تحميل بيانات الفندق");
+        alert(t("hotelLoadError"));
       } finally {
         setLoading(false);
       }
     };
 
     getHotel();
-  }, [hotelId]);
+  }, [hotelId, t]);
 
   // تحديث قيم الحقول
   const handleInputChange = (e) => {
@@ -52,13 +54,12 @@ export default function EditHotel() {
 
     try {
       await api.put(`/hotels/${hotelId}`, hotelData);
-
-      alert("تم تعديل الفندق بنجاح");
+      alert(t("hotelUpdated"));
 
       navigate('/hotels' );
     } catch (error) {
       console.error(error);
-      alert("حدث خطأ أثناء التعديل");
+      alert(t("hotelUpdateError"));
     }
   };
 
@@ -79,7 +80,7 @@ export default function EditHotel() {
       <TextField
         fullWidth
         margin="normal"
-        label="Price Per Night"
+        label={t("pricePerNight")}
         name="price_per_night"
         type="number"
         value={hotelData.price_per_night}
@@ -89,7 +90,7 @@ export default function EditHotel() {
       <TextField
         fullWidth
         margin="normal"
-        label="Available Rooms"
+        label={t("availableRooms")}
         name="available_rooms"
         type="number"
         value={hotelData.available_rooms}
@@ -102,7 +103,7 @@ export default function EditHotel() {
         fullWidth
         sx={{ mt: 3 }}
       >
-        Save Changes
+        {t("saveChanges")}
       </Button>
     </Box>
   );

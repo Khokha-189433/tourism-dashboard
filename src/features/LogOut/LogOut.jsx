@@ -9,15 +9,17 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { Link, useNavigate} from 'react-router-dom';
 import api from '../../api/refreshToken';
+import { useTranslation } from 'react-i18next';
 
 
 export default function LogOut() {
+  const { t } = useTranslation();
 
   const navgiate = useNavigate();
   // دالة تسجيل الخروج: تحذف التوكن وتعيد التوجيه للصفحة الرئيسية
 const  handleLogout = async ()=>
  {
-  if(window.confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟"))
+  if(window.confirm(t("confirmLogout")))
   {
       try{
        const res = await api.post("/auth/logout" , {} 
@@ -51,7 +53,7 @@ const  handleLogout = async ()=>
                 <LogoutOutlined />
               </ListItemIcon>
               <ListItemText 
-                primary="LogOut "
+                primary={t("logout")}
                 sx={{
                   color: "rgba(45, 146, 247, 0.412)",
                   opacity: open ? 1 : 0,

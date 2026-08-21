@@ -18,12 +18,14 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import api from "../../../api/refreshToken";
+import { useTranslation } from "react-i18next";
 
 ////////////////////////////////
 
 ///////////////////////////////
 export default function Users() {
   const theme = useTheme();
+  const { t } = useTranslation();
   // حالة تخزين قائمة المستخدمين
   const [users, setUsers] = useState([]);
   // حالة التحميل أثناء انتظار البيانات من السيرفر
@@ -86,7 +88,7 @@ export default function Users() {
         sx={{ marginBlockEnd:4 , justifyContent: "space-between", alignItems: "center" }}
       >
         <Typography variant="h4" fontWeight="bold" sx={{paddingBlockEnd:1}} >
-           All Users
+           {t("users")}
         </Typography>
         <Divider />
       </Box>
@@ -107,9 +109,9 @@ export default function Users() {
         <Table  sx={{ }} aria-label="users table">
           <TableHead sx={{}}>
             <TableRow>
-              <TableCell>First Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>User</TableCell>
+              <TableCell>{t("firstName")}</TableCell>
+              <TableCell>{t("email")}</TableCell>
+              <TableCell>{t("user")}</TableCell>
             </TableRow>
           </TableHead>
 
@@ -135,7 +137,7 @@ export default function Users() {
                     to="/User"
                     state={{ UserId: user.id }}
                   >
-                    Open
+                    {t("open")}
                   </Button>
                 </TableCell>
               </TableRow>

@@ -35,6 +35,7 @@ import {
   Email,
   Hotel,
 } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 
 function InfoRow({ title, value }) {
@@ -60,6 +61,7 @@ export default function Hotell() {
  const [loading, setLoading] = useState(true);
  const [mainImage, setMainImage] = useState("");
  const theme = useTheme();
+ const { i18n, t } = useTranslation();
  const placeholder =
     "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200";
 
@@ -151,11 +153,15 @@ return (
             <Box>
 
               <Typography variant="h3" fontWeight="bold">
-                {hotel.name_ar}
+                {i18n.language === "ar"
+                  ? hotel.name_ar || hotel.name_en
+                  : hotel.name_en || hotel.name_ar}
               </Typography>
 
               <Typography variant="h5" color="text.secondary">
-                {hotel.name_en}
+                {i18n.language === "ar"
+                  ? hotel.name_en || hotel.name_ar
+                  : hotel.name_ar || hotel.name_en}
               </Typography>
 
               <Box
@@ -179,7 +185,11 @@ return (
                 }}
               >
                 <LocationOn color="primary" />
-                <Typography>{hotel.address_ar}</Typography>
+                <Typography>
+                  {i18n.language === "ar"
+                    ? hotel.address_ar || hotel.address_en
+                    : hotel.address_en || hotel.address_ar}
+                </Typography>
               </Box>
 
             </Box>
@@ -232,7 +242,7 @@ return (
                 multiple={false}
                 displayLimit={4}
                 onRefresh={getHotel}
-                title="معرض الصور"
+                title={t("image")}
               />
 
             </CardContent>
@@ -248,19 +258,19 @@ return (
             <CardContent>
 
               <Typography variant="h5" color="primary" mb={3}>
-                معلومات الفندق
+                {t("hotels")}
               </Typography>
               <Divider sx={{ mb: 3 , mx: 3 }} />
 
-              <StatCard  title="الاسم بالعربية" value={hotel.name_ar}   />
-
-              <StatCard  title="الاسم بالإنجليزية" value={hotel.name_en}   />
+              <StatCard title={t("name")} value={i18n.language === "ar" ? hotel.name_ar : hotel.name_en} />
 
               <StatCard  title="التصنيف" value={`${hotel.stars} ⭐`} />
 
               <StatCard 
-                title="الوجهة"
-                value={hotel.Destination?.name_ar}
+                title={t("destination")}
+                value={i18n.language === "ar"
+                  ? hotel.Destination?.name_ar || hotel.Destination?.name_en
+                  : hotel.Destination?.name_en || hotel.Destination?.name_ar}
               />
 
             </CardContent>
@@ -282,7 +292,7 @@ return (
             <CardContent>
 
               <Typography variant="h6" color="primary" mb={3}>
-                المرافق والخدمات
+                {t("amenities")}
               </Typography>
                <Divider sx={{ mb: 3 , mx: 3 }} />
               <Grid container spacing={2}>
@@ -331,7 +341,7 @@ return (
             <CardContent>
 
               <Typography variant="h6" color="primary" mb={3}>
-                التواصل
+                {t("contact")}
               </Typography>
              <Divider sx={{ mb: 3 , mx: 3 }} />
               <Box
@@ -370,15 +380,15 @@ return (
             <CardContent>
 
               <Typography variant="h6" color="primary" mb={3}>
-                إحصائيات الفندق
+                {t("statistics")}
               </Typography>
              <Divider sx={{ mb: 3 , mx: 3 }} />
               <StatCard title="إجمالي الغرف" value={hotel.total_rooms} />
 
-              <StatCard title="غرف متاحة" value={hotel.available_rooms} />
+              <StatCard title={t("availableRooms")} value={hotel.available_rooms} />
 
               <StatCard
-                title="السعر"
+                title={t("price")}
                 value={`${hotel.price_per_night} ${hotel.currency}`}
               />
 
@@ -397,13 +407,15 @@ return (
         <CardContent>
 
           <Typography variant="h6" color="primary" mb={3}>
-            وصف الفندق
+            {t("description")}
           </Typography>
 
           <Divider sx={{ mb: 3 , mx: 3 }} />
 
           <Typography color="text.secondary" lineHeight={2}>
-            {hotel.description_ar}
+            {i18n.language === "ar"
+              ? hotel.description_ar || hotel.description_en
+              : hotel.description_en || hotel.description_ar}
           </Typography>
 
         </CardContent>
@@ -417,7 +429,7 @@ return (
         <CardContent>
 
           <Typography variant="h6" color="primary" mb={3}>
-            آخر التقييمات
+            {t("reviews")}
           </Typography>
 
           <Divider sx={{ mb: 3 , mx: 3 }} />

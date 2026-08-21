@@ -434,6 +434,7 @@ slotProps={{
     step: 1,
   },
 }}
+
 value={hotelData.stars}
 onChange={handleInputChange}
 />
@@ -651,7 +652,7 @@ onChange={handleInputChange}
      
     }}
   >
-    {loading ? " انشاء فندق..." : "انشاء فندق "}
+    {loading ? t("creatingHotel") : t("createHotel")}
   </Button>
    <Button
       variant="outlined"
@@ -665,7 +666,7 @@ onChange={handleInputChange}
         marginLeft:5
       }}
     >
-      إلغاء
+      {t("cancel")}
  </Button>
 </Box>
 {/* \\\\\\\\\\\\ */}

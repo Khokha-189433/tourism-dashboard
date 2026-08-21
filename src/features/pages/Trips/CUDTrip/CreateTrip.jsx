@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-
-
+import TripOriginIcon from '@mui/icons-material/TripOrigin';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Box,
   Button,
@@ -21,9 +21,11 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import api from "../../../../api/refreshToken";
+import { useTranslation } from "react-i18next";
 
 const CreateTrip = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title_ar: "",
@@ -71,37 +73,37 @@ const CreateTrip = () => {
 
       // التحقق من الحقول المطلوبة
       if (!formData.title_ar || !formData.title_en) {
-        alert("يرجى ملء العنوان");
+        alert(t("requiredTitle"));
         setLoading(false);
         return;
       }
 
       if (!formData.short_description_ar || !formData.short_description_en) {
-        alert("يرجى إدخال الوصف القصير بالعربية والإنجليزية");
+        alert(t("requiredShortDescription"));
         setLoading(false);
         return;
       }
 
       if (!formData.price) {
-        alert("يرجى إدخال السعر");
+        alert(t("requiredPrice"));
         setLoading(false);
         return;
       }
 
       if (!formData.currency) {
-        alert("يرجى اختيار العملة");
+        alert(t("requiredCurrency"));
         setLoading(false);
         return;
       }
 
       if (!formData.duration_days) {
-        alert("يرجى إدخال مدة الرحلة");
+        alert(t("requiredDuration"));
         setLoading(false);
         return;
       }
 
       if (!formData.max_participants) {
-        alert("يرجى إدخال الحد الأقصى للمشاركين");
+        alert(t("requiredParticipants"));
         setLoading(false);
         return;
       }
@@ -137,7 +139,7 @@ const CreateTrip = () => {
    ///هذا السطر ينقل المستخدم من صفحة إنشاء الرحلة إلى صفحة عرض الرحلات ويُمرّر معه رسالة نجاح.
       navigate("/Trips", {  // هذا ينقل التطبيق إلى المسار /Trips  //يستخدم react-router-dom، لذلك يحدث التنقل داخل التطبيق بدون إعادة تحميل الصفحة.
         state: {
-          message: "تم إنشاء الرحلة بنجاح",
+          message: t("tripCreated"),
           severity: "success",
         },
       });
@@ -156,6 +158,58 @@ const CreateTrip = () => {
         p: 5,
       }}
     >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/trips")}
+        >
+          {t("back")}
+        </Button>
+
+        <Box sx={{ textAlign: "right" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: 1,
+            }}
+          >
+            <TripOriginIcon
+              sx={{
+                color: "#6ea3dc",
+                fontSize: 30,
+              }}
+            />
+
+            <Typography variant="h4" fontWeight="bold">
+              {t("addTrip")}
+            </Typography>
+          </Box>
+
+          <Typography color="text.secondary">
+            {t("addNewTrip")}
+          </Typography>
+        </Box>
+      </Box>
+
+
+
+
+
+
+
+
+
+
+
       <Card
         sx={{
           maxWidth: 1200,
@@ -166,8 +220,8 @@ const CreateTrip = () => {
         <CardContent>
 
           {/* العنوان */}
-          <Typography variant="h4" fontWeight="bold" mb={4}>
-            إنشاء رحلة جديدة
+          <Typography  mb={4} sx={{margin:4 , fontSize:27 , color:"#4286ae"}}>
+            {t("createNewTrip")}
           </Typography>
 
           <Grid container spacing={3}>
@@ -175,7 +229,7 @@ const CreateTrip = () => {
             <Grid  xs={12} md={6}>
               <TextField
                 fullWidth
-                label="عنوان الرحلة بالعربي"
+                label={t("tripTitleArabic")}
                 name="title_ar"
                 value={formData.title_ar}
                 onChange={handleChange}
@@ -186,7 +240,7 @@ const CreateTrip = () => {
             <Grid  xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Trip Title English"
+                label={t("tripTitleEnglish")}
                 name="title_en"
                 value={formData.title_en}
                 onChange={handleChange}
@@ -199,7 +253,7 @@ const CreateTrip = () => {
                 fullWidth
                 multiline
                 rows={2}
-                label="الوصف القصير بالعربي"
+                label={t("shortDescriptionArabic")}
                 name="short_description_ar"
                 value={formData.short_description_ar}
                 onChange={handleChange}
@@ -212,7 +266,7 @@ const CreateTrip = () => {
                 fullWidth
                 multiline
                 rows={2}
-                label="Short Description English"
+                label={t("shortDescriptionEnglish")}
                 name="short_description_en"
                 value={formData.short_description_en}
                 onChange={handleChange}
@@ -225,7 +279,7 @@ const CreateTrip = () => {
                 fullWidth
                 multiline
                 rows={4}
-                label="الوصف بالعربي"
+                label={t("descriptionArabic")}
                 name="description_ar"
                 value={formData.description_ar}
                 onChange={handleChange}
@@ -238,7 +292,7 @@ const CreateTrip = () => {
                 fullWidth
                 multiline
                 rows={4}
-                label="Description English"
+                label={t("descriptionEnglish")}
                 name="description_en"
                 value={formData.description_en}
                 onChange={handleChange}
@@ -250,7 +304,7 @@ const CreateTrip = () => {
               <TextField
                 fullWidth
                 type="number"
-                label="السعر"
+                label={t("price")}
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
@@ -262,7 +316,7 @@ const CreateTrip = () => {
               <TextField
                 fullWidth
                 type="number"
-                label="سعر الخصم"
+                label={t("discountPrice")}
                 name="discount_price"
                 value={formData.discount_price}
                 onChange={handleChange}
@@ -274,7 +328,7 @@ const CreateTrip = () => {
               <TextField
                 select
                 fullWidth
-                label="العملة"
+                label={t("currency")}
                 name="currency"
                 value={formData.currency}
                 onChange={handleChange}
@@ -289,7 +343,7 @@ const CreateTrip = () => {
               <TextField
                 fullWidth
                 type="number"
-                label="مدة الرحلة بالأيام"
+                label={t("tripDuration")}
                 name="duration_days"
                 value={formData.duration_days}
                 onChange={handleChange}
@@ -301,7 +355,7 @@ const CreateTrip = () => {
               <TextField
                 fullWidth
                 type="number"
-                label="أقصى عدد مشاركين"
+                label={t("maxParticipants")}
                 name="max_participants"
                 value={formData.max_participants}
                 onChange={handleChange}
@@ -314,13 +368,13 @@ const CreateTrip = () => {
               <TextField
                 select
                 fullWidth
-                label="Status"
+                label={t("status")}
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
               >
-                <MenuItem value="published">published</MenuItem>
-                <MenuItem value="draft">draft</MenuItem>
+                <MenuItem value="published">{t("published")}</MenuItem>
+                <MenuItem value="draft">{t("draft")}</MenuItem>
               </TextField>
             </Grid>
 
@@ -335,7 +389,7 @@ const CreateTrip = () => {
                     onChange={handleChange}
                   />
                 }
-                label="رحلة مميزة"
+                label={t("featuredTrip")}
               />
             </Grid>
 
@@ -352,7 +406,7 @@ const CreateTrip = () => {
                   py: 1.5,
                 }}
               >
-                {loading ? "جاري الحفظ..." : "إنشاء الرحلة"}
+                {loading ? t("saving") : t("createTrip")}
               </Button>
             </Grid>
 

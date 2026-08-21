@@ -32,13 +32,20 @@ import DeleteButton from "../../../components/UI/DeleteButton";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../../../api/refreshToken";
-import isArabic from "../../Translate/Translation";
+import { useTranslation } from "react-i18next";
 
 const categories = ["تاريخية", "طبيعية", "دينية", "مغامرات"];
 const statuses = ["published", "draft"];
 
 export default function TripsTable() {
    const theme = useTheme();
+  const { i18n, t } = useTranslation();
+  const categoryLabels = {
+    "تاريخية": "historical",
+    "طبيعية": "natural",
+    "دينية": "religious",
+    "مغامرات": "adventure",
+  };
    const [trips, setTrips] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
@@ -160,7 +167,7 @@ export default function TripsTable() {
         sx={{ marginBlockEnd:4, justifyContent: "space-between", alignItems: "center" }}
       >
         <Typography variant="h4" fontWeight="bold">
-          إدارة الرحلات
+          {t("trips")}
         </Typography>
         <Divider />
         {/*  */}
@@ -182,58 +189,61 @@ export default function TripsTable() {
            color: theme.palette.mode === "dark" ? "#fff" : "#000",     
           }}
         >
-          إضافة رحلة
+          {t("add")} {t("trips")}
         </Button>
        
       </Box>
 
       {/* واجهة الفلاتر */}
       <Card sx={{ p: 2, mb: 3, borderRadius: 5 , border:'1px solid #b0a3a399' }}>
-        <Typography variant="h6" mb={2}>فلترة الرحلات</Typography>
+        <Typography variant="h6" mb={2}>{t("filterTrips")}</Typography>
         <Grid container spacing={2} sx={{alignItems:"center"}}>
           <Grid  xs={12} md={4}>
             <TextField
               fullWidth
               name="search"
-              label="ابحث عن رحلة"
+              label={t("searchTrip")}
               value={filters.search}
               onChange={handleFilterChange}
-              InputProps={{
+              slotProps={{
+              input: {
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
-              }} 
+                 ),
+                 },
+              }}
+
             />
           </Grid>
       
           <Grid  xs={12} md={2}>
-            <TextField select fullWidth name="category" label="التصنيف" value={filters.category} onChange={handleFilterChange}>
-              <MenuItem value="">الكل</MenuItem>
-              {categories.map((c) => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
+            <TextField select fullWidth name="category" label={t("category")} value={filters.category} onChange={handleFilterChange}>
+              <MenuItem value="">{t("all")}</MenuItem>
+              {categories.map((c) => (<MenuItem key={c} value={c}>{t(categoryLabels[c])}</MenuItem>))}
             </TextField>
           </Grid>
 
           <Grid  xs={12} md={2}>
-            <TextField select fullWidth name="status" label="الحالة" value={filters.status} onChange={handleFilterChange}>
-              <MenuItem value="">الكل</MenuItem>
-              {statuses.map((s) => (<MenuItem key={s} value={s}>{s}</MenuItem>))}
+            <TextField select fullWidth name="status" label={t("status")} value={filters.status} onChange={handleFilterChange}>
+              <MenuItem value="">{t("all")}</MenuItem>
+              {statuses.map((s) => (<MenuItem key={s} value={s}>{t(s)}</MenuItem>))}
             </TextField>
           </Grid>
 
           <Grid  xs={6} md={2}>
-            <TextField fullWidth type="number" name="minPrice" label="أقل سعر" value={filters.minPrice} onChange={handleFilterChange} />
+            <TextField fullWidth type="number" name="minPrice" label={t("minPrice")} value={filters.minPrice} onChange={handleFilterChange} />
           </Grid>
 
           <Grid  xs={6} md={2}>
-            <TextField fullWidth type="number" name="maxPrice" label="أعلى سعر" value={filters.maxPrice} onChange={handleFilterChange} />
+            <TextField fullWidth type="number" name="maxPrice" label={t("maxPrice")} value={filters.maxPrice} onChange={handleFilterChange} />
           </Grid>
 
           <Grid  xs={12} md={12}>
             <Box display="flex" gap={2} mt={1}>
-              <Button variant="contained" startIcon={<FilterAltIcon />} onClick={applyFilters} sx={{margin:2}}>تطبيق الفلاتر</Button>
-              <Button variant="outlined" onClick={resetFilters}>إعادة تعيين</Button>
+              <Button variant="contained" startIcon={<FilterAltIcon />} onClick={applyFilters} sx={{margin:2}}>{t("applyFilters")}</Button>
+              <Button variant="outlined" onClick={resetFilters}>{t("reset")}</Button>
             </Box>
           </Grid>
         </Grid>
@@ -265,15 +275,15 @@ export default function TripsTable() {
               }}
             >
           
-           <TableCell> عنوان الرحلة   </TableCell>
-              <TableCell>	السعر  </TableCell>
-              <TableCell> المدة باليوم</TableCell>
+            <TableCell>{t("tripTitle")}</TableCell>
+              <TableCell>{t("price")}</TableCell>
+              <TableCell>{t("duration")}</TableCell>
  
-              <TableCell>الحالة  </TableCell>
-              <TableCell> هل الرحلة مميزة </TableCell>
+              <TableCell>{t("status")}</TableCell>
+              <TableCell>{t("featured")}</TableCell>
               
               <TableCell align="center">
-                  الزر 
+                  {t("actions")}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -283,7 +293,9 @@ export default function TripsTable() {
             {trips.map((trip) => (
               <TableRow key={trip.id} hover>
                 <TableCell>
-                 {isArabic ? trip.title_ar || trip.title_en : trip.title_en || trip.title_ar}
+                 {i18n.language === "ar"
+                   ? trip.title_ar || trip.title_en
+                   : trip.title_en || trip.title_ar}
                 </TableCell>
               
                 <TableCell>  
@@ -297,14 +309,14 @@ export default function TripsTable() {
                  
                    <TableCell>
                   <Chip
-                    label={trip.status}
+                    label={t(trip.status)}
                     color={getStatusColor(trip.status)}
                     size="small"
                   />
                 </TableCell>
 
                   <TableCell>
-                    {trip.is_featured ? "True" : "False"}
+                    {trip.is_featured ? t("true") : t("false")}
                    
                   </TableCell>
 
@@ -325,9 +337,9 @@ export default function TripsTable() {
                     endpoint={`/trips/${trip.id}`}
                     itemId={trip.id}
                     onDeleted={() => loadTrips(filters)}
-                    confirmationMessage="هل أنت متأكد من حذف الرحلة؟"
-                    successMessage="تم حذف الرحلة بنجاح"
-                    errorMessage="حدث خطأ أثناء حذف الرحلة"
+                    confirmationMessage={t("confirmDeleteTrip")}
+                    successMessage={t("tripDeleted")}
+                    errorMessage={t("tripDeleteError")}
                   />
                 </TableCell>
               </TableRow>

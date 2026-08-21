@@ -32,12 +32,14 @@ import { useTheme } from "@mui/material/styles";
 // ICONS
 // =========================
 import EditIcon from "@mui/icons-material/Edit";
+import { useTranslation } from "react-i18next";
 
 // ======================================================================
 // COMPONENT USER
 // ======================================================================
 
 export default function User() {
+  const { t } = useTranslation();
 
   // ======================================================================
   // STATES
@@ -223,7 +225,7 @@ export default function User() {
             p: 2,
           }}
         >
-          User Management
+          {t("userManagement")}
         </Typography>
 
         {/* ========================= */}
@@ -252,26 +254,26 @@ export default function User() {
             <TableHead >
               <TableRow>
 
-                <TableCell>ID</TableCell>
+                <TableCell>{t("id")}</TableCell>
 
                 <TableCell>
-                  First Name
+                  {t("firstName")}
                 </TableCell>
 
                 <TableCell>
-                  Last Name
+                  {t("lastName")}
                 </TableCell>
 
-                <TableCell>Email</TableCell>
+                <TableCell>{t("email")}</TableCell>
 
-                <TableCell>Role</TableCell>
+                <TableCell>{t("role")}</TableCell>
 
-                <TableCell>Phone</TableCell>
+                <TableCell>{t("phone")}</TableCell>
 
-                <TableCell>Status</TableCell>
+                <TableCell>{t("status")}</TableCell>
 
                 <TableCell align="center">
-                  Update User
+                  {t("updateUser")}
                 </TableCell>
 
               </TableRow>
@@ -310,9 +312,7 @@ export default function User() {
                 </TableCell>
 
                 <TableCell>
-                  {user.is_active
-                    ? "Active"
-                    : "Inactive"}
+                  {user.is_active ? t("active") : t("inactive")}
                 </TableCell>
 
                 {/* ========================= */}

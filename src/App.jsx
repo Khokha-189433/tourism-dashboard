@@ -1,6 +1,11 @@
 import { useMemo, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+////////////////////////////////////////////////////
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
+////////////////////////////////////////////////////
 import CssBaseline from '@mui/material/CssBaseline';
 import Login from "./features/Login/Login";
 import Dashboard from "./features/pages/Dashboard/dashboard";
@@ -20,8 +25,32 @@ import Hotel from "./features/pages/Hotels/Hotel";
 import CreateHotel from "./features/pages/Hotels/CUD_Hotels/CreateHotel";
 import EditHotel from "./features/pages/Hotels/CUD_Hotels/EditHotel";
 /////////////////////////////////////
+import Destinations from "./features/pages/Destinations/Destinations"
+import Destination from "./features/pages/Destinations/Destination"
+import CreateDestinations from "./features/pages/Destinations/CUD_Destinations/CreateDestinations";
+
+
+
+
+
+
+
+
 
 function App() {
+  //////////Translate////////////
+    const { i18n } = useTranslation();
+
+  useEffect(() => {
+    document.documentElement.lang = i18n.language;
+
+    document.documentElement.dir =
+      i18n.language === "ar"
+        ? "rtl"
+        : "ltr";
+  }, [i18n.language]);
+
+  ///////////////////////
   const [mode, setMode] = useState('light');
 
   const theme = useMemo(
@@ -59,8 +88,10 @@ function App() {
               <Route path="/Hotel/:hotelId" element={<Hotel />} />
               <Route path="/CreateHotel" element={<CreateHotel />} />
               <Route path="/EditHotel/:hotelId" element={<EditHotel />} />
-
-
+               {/* Routes for Destinations */}
+               <Route path="/Destinations" element={<Destinations />} />
+               <Route path="/Destination/:destinationId" element={<Destination />} />
+                <Route path="/destinations/CreateDestinations"  element={<CreateDestinations />} />
             </Route>
           </Routes>
         </div>

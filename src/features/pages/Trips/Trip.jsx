@@ -32,6 +32,7 @@ import {
 
 import api from '../../../api/refreshToken';
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 const TripDetails = () => {
   
     //   // GET rip ID FROM LOCATION
@@ -51,6 +52,7 @@ const TripDetails = () => {
 
   // loading
   const [loading, setLoading] = useState(true);
+  const { i18n, t } = useTranslation();
 
   // جلب بيانات الرحلة
   const getTrip = useCallback(async () => {
@@ -147,11 +149,11 @@ return (
           >
             <Box>
               <Typography variant="h3" fontWeight="bold">
-                {trip?.title_ar}
+                {i18n.language === "ar" ? trip?.title_ar || trip?.title_en : trip?.title_en || trip?.title_ar}
               </Typography>
 
               <Typography variant="h5" color="text.secondary">
-                {trip?.title_en}
+                {i18n.language === "ar" ? trip?.title_en || trip?.title_ar : trip?.title_ar || trip?.title_en}
               </Typography>
 
               <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
@@ -160,7 +162,7 @@ return (
                 )}
 
                 {trip?.is_featured && (
-                  <Chip label="Featured" color="warning" />
+                  <Chip label={t("featured")} color="warning" />
                 )}
               </Box>
             </Box>
@@ -213,25 +215,24 @@ return (
             <CardContent>
 
               <Typography variant="h6" color="primary" mb={3}>
-                معلومات الرحلة
+                {t("trips")}
               </Typography>
               <Divider sx={{ mb: 3 , mx: 3 }} />
-              <StatCard title="العنوان بالعربي " value={trip?.title_ar} />
-              <StatCard title="العنوان بالإنجليزية" value={trip?.title_en} />
+              <StatCard title={t("name")} value={i18n.language === "ar" ? trip?.title_ar : trip?.title_en} />
 
               <StatCard
-                title="الوصف المختصر"
-                value={trip?.short_description_ar}
+                title={t("description")}
+                value={i18n.language === "ar" ? trip?.short_description_ar : trip?.short_description_en}
               />
 
               <StatCard
                 title="الفئة"
-                value={trip?.Category?.name_ar}
+                value={i18n.language === "ar" ? trip?.Category?.name_ar || trip?.Category?.name_en : trip?.Category?.name_en || trip?.Category?.name_ar}
               />
 
               <StatCard
                 title="الوجهة"
-                value={trip?.Destination?.name_ar}
+                value={i18n.language === "ar" ? trip?.Destination?.name_ar || trip?.Destination?.name_en : trip?.Destination?.name_en || trip?.Destination?.name_ar}
               />
 
             </CardContent>
@@ -352,22 +353,13 @@ return (
         <CardContent>
        
           <Typography variant="h6" color="primary" mb={3}>
-            وصف الرحلة
+            {t("description")}
           </Typography>
           <Divider sx={{ mb: 3 , mx: 3 }} />
           <Typography color="text.secondary"  sx={{ lineHeight: 2 }}>
-            {trip?.description_ar}
+            {i18n.language === "ar" ? trip?.description_ar || trip?.description_en : trip?.description_en || trip?.description_ar}
           </Typography>
 
-          {trip?.description_en && (
-            <>
-           
-
-              <Typography color="text.secondary" sx={{ lineHeight: 2 }}>
-                {trip.description_en}
-              </Typography>
-            </>
-          )}
 
         </CardContent>
       </Card>
