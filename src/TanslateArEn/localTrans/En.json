@@ -49,7 +49,109 @@
   "statistics": "Statistics",
   "availableRooms": "Available rooms",
   "price": "Price",
-  "reviews": "Latest reviews"
+  "reviews": "Latest reviews",
+  "imageGallery": "Image gallery",
+  "addImage": "Add image",
+  "uploadingImage": "Uploading...",
+  "imageUploadError": "An error occurred while uploading the image. Please try again."
+  ,"transports": "Transports"
+  ,"manageTransports": "Manage tourism transports"
+  ,"addTransport": "Add transport"
+  ,"totalTransports": "Total transports"
+  ,"activeTransports": "Active transports"
+  ,"searchTransports": "Search transports"
+  ,"transportName": "Transport name"
+  ,"transportType": "Transport type"
+  ,"capacity": "Capacity"
+  ,"pricePerTrip": "Price per trip"
+  ,"passengers": "passengers"
+  ,"details": "Details"
+  ,"previous": "Previous"
+  ,"next": "Next"
+  ,"transportTypes": {
+  "bus": "Bus",
+  "minibus": "Minibus",
+  "car": "Car",
+  "airplane": "Airplane",
+  "boat": "Boat",
+  "train": "Train"
+}
+  ,"addNewTransport": "Add a new tourism transport"
+  ,"transportInformation": "Transport information"
+  ,"transportNameArabic": "Transport name in Arabic"
+  ,"transportNameEnglish": "Transport name in English"
+  ,"transportDescriptionArabic": "Transport description in Arabic"
+  ,"transportDescriptionEnglish": "Transport description in English"
+  ,"companyName": "Company name"
+  ,"contactPhone": "Contact phone"
+  ,"saveTransport": "Save transport"
+  ,"requiredTransportFields": "Please fill in all transport fields"
+  ,"transportCreated": "Transport added successfully"
+  ,"transportCreateError": "An error occurred while adding the transport"
+  ,"invalidTransportNumbers": "Capacity must be a positive whole number and price must be zero or greater"
+  ,"transportDetails": "Transport details"
+  ,"transportDetailsDescription": "View detailed transport information"
+  ,"transportDetailsError": "Failed to load transport details"
+  ,"transportNotFound": "Transport not found"
+  ,"editTransport": "Edit transport"
+  ,"editTransportDescription": "Edit transport price"
+  ,"transportFetchError": "Failed to load transport data"
+  ,"enterValidPrice": "Please enter a valid price greater than zero"
+  ,"transportUpdateError": "An error occurred while updating the transport"
+  ,"transportUpdated": "Transport updated successfully"
+  ,"transportForm": {
+    "addTitle": "Add transport",
+    "addSubtitle": "Add a new transport option to the system",
+    "basicInformation": "Basic information",
+    "basicInformationSubtitle": "Select the transport type and capacity",
+    "type": "Transport type",
+    "types": {
+      "bus": "Bus",
+      "car": "Car",
+      "boat": "Boat",
+      "flight": "Flight",
+      "train": "Train"
+    },
+    "capacity": "Capacity and passengers",
+    "names": "Transport names",
+    "namesSubtitle": "Enter the name in Arabic and English",
+    "nameAr": "Transport name in Arabic",
+    "nameArPlaceholder": "Example: Tourist bus",
+    "nameEn": "Transport name in English",
+    "nameEnPlaceholder": "Example: Tourist bus",
+    "description": "Description",
+    "descriptionSubtitle": "Add a short description of the transport",
+    "descriptionAr": "Description in Arabic",
+    "descriptionArPlaceholder": "Write the transport description in Arabic",
+    "descriptionEn": "Description in English",
+    "descriptionEnPlaceholder": "Write the transport description in English",
+    "priceInformation": "Price information",
+    "priceSubtitle": "Set the price and currency per trip",
+    "price": "Price per trip",
+    "currency": "Currency",
+    "companyInformation": "Company information",
+    "companySubtitle": "Enter the company and contact details",
+    "companyName": "Company name",
+    "companyPlaceholder": "Example: Tourism transport company",
+    "phone": "Phone number",
+    "createError": "An error occurred while adding the transport",
+    "created": "Transport added successfully"
+  }
+  ,"categories": "Categories"
+  ,"manageCategories": "Manage tourism categories"
+  ,"addCategory": "Add category"
+  ,"totalCategories": "Total categories"
+  ,"activeCategories": "Active categories"
+  ,"searchCategories": "Search categories"
+  ,"sortOrder": "Display order"
+  ,"icon": "Icon"
+  ,"mountainIcon": "Mountain"
+  ,"beachIcon": "Beach"
+  ,"museumIcon": "Museum"
+  ,"campIcon": "Camp"
+  ,"forestIcon": "Forest"
+  ,"categoryName": "Category name"
+  ,"noCategoriesFound": "No categories found"
   ,"filterTrips": "Filter trips",
   "searchTrip": "Search for a trip",
   "category": "Category",
@@ -69,6 +171,26 @@
   "tripDeleted": "Trip deleted successfully",
   "tripDeleteError": "An error occurred while deleting the trip",
   "back": "Back",
+  "packageDetails": "Package Details",
+  "packageDetailsDescription": "View all package information and associated services",
+  "packageFetchError": "Failed to load package data",
+  "packageNotFound": "Package not found",
+  "overview": "Overview",
+  "bookNow": "Book Now",
+  "noDescription": "No description available",
+  "noServices": "No services available",
+  "endDate": "End Date",
+  "participants": "Participants",
+  "creator": "Created By",
+  "createdAt": "Created At",
+  "updatedAt": "Last Updated",
+  "noTrips": "No trips associated with this package",
+  "noHotels": "No hotels associated with this package",
+  "checkIn": "Check-in",
+  "checkOut": "Check-out",
+  "route": "Route",
+  "bookPackage": "Book Package",
+  "noTransport": "No transportation associated with this package",
   "addTrip": "Add trip",
   "addNewTrip": "Add a new tourism trip",
   "createNewTrip": "Create a new trip",
@@ -151,9 +273,172 @@
   "egyptExampleEnglish": "Example: Egypt",
   "countryCodeExample": "Example: EGY",
   "saveDestination": "Save destination",
+  "editDestination": "Edit destination",
+  "editDestinationDescription": "Edit destination details",
+  "destinationFetchError": "Failed to load destination data",
+  "countryCodeMustBeThreeCharacters": "The country code must contain 3 letters",
+  "destinationUpdated": "Destination updated successfully",
+  "destinationUpdateError": "An error occurred while updating the destination",
+  "destinationDetails": "Destination details",
+  "destinationDetailsDescription": "View destination information",
+  "destinationNotFound": "Destination not found",
+  "edit": "Edit",
   "hotelLoadError": "Failed to load hotel data",
   "hotelUpdated": "Hotel updated successfully",
   "hotelUpdateError": "An error occurred while updating the hotel",
-  "saveChanges": "Save changes"
-  
+  "saveChanges": "Save changes",
+  "editCategory": "Edit Category",
+  "editCategoryDescription": "Edit category name",
+  "updateCategory": "Update Category",
+  "categoryUpdated": "Category updated successfully",
+  "categoryUpdateError": "An error occurred while updating the category" ,
+  "packages": {
+    "title": "Tour Packages",
+    "subtitle": "Manage all tourism packages",
+    "addPackage": "Add Package",
+    "search": "Search packages...",
+    "thumbnail": "Thumbnail",
+    "name": "Package Name",
+    "price": "Price",
+    "duration": "Duration",
+    "days": "Days",
+    "destination": "Destination",
+    "category": "Category",
+    "availableSeats": "Available Seats",
+    "status": "Status",
+    "actions": "Actions",
+    "published": "Published",
+    "featured": "Featured Package",
+    "noImage": "No Image",
+    "noPackages": "No packages found",
+    "view": "View Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this package?",
+    "createSubtitle": "Create a new tourism package",
+
+    "basicInformation": "Basic Information",
+
+    "titleAr": "Package Name in Arabic",
+    "titleEn": "Package Name in English",
+
+    "descriptionAr": "Description in Arabic",
+    "descriptionEn": "Description in English",
+
+    "priceAndDuration": "Price & Duration",
+    "currency": "Currency",
+    "discountPrice": "Discount Price",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "maxParticipants": "Maximum Participants",
+
+    "includedServices": "Included Services",
+    "includedServicesAr": "Included Services in Arabic",
+    "includedServicesEn": "Included Services in English",
+
+    "trips": "Trips",
+    "selectTrips": "Select Trips",
+    "noTrips": "No trips available",
+
+    "hotels": "Hotels",
+    "selectHotel": "Select Hotel",
+    "nights": "Nights",
+
+    "transports": "Transportation",
+    "selectTransport": "Select Transportation",
+    "routeAr": "Route in Arabic",
+    "routeEn": "Route in English",
+    "seats": "seats",
+
+    "select": "Select",
+    "add": "Add",
+    "addTransport": "Add Transportation",
+    "remove": "Remove",
+
+    "settings": "Package Settings",
+    "draft": "Draft",
+    "cancelled": "Cancelled",
+    "isFeatured": "Featured Package",
+
+    "create": "Create Package",
+    "success": "Package created successfully",
+
+    "errors": {
+      "loadData": "Failed to load trips, hotels and transportation",
+      "titleAr": "Please enter the Arabic package name",
+      "titleEn": "Please enter the English package name",
+      "price": "Please enter the price",
+      "pricePositive": "Price must be greater than zero",
+      "currency": "Currency must be SYP or USD",
+      "discountPositive": "Discount price must be greater than zero",
+      "duration": "Please enter the package duration",
+      "dates": "Please select the start and end dates",
+      "maxParticipants": "Please enter the maximum participants",
+      "hotelAlreadyAdded": "This hotel has already been added",
+      "transportAlreadyAdded": "This transportation has already been added",
+      "createFailed": "Failed to create package"
+    },
+    "details": {
+      "packageDetails": "Package Details",
+      "featured": "Featured Package",
+      "draft": "Draft",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "unknown": "Unknown",
+      "bookPackage": "Book Package",
+      "discountPrice": "Discount Price",
+      "currency": "Currency",
+
+      "packageInformation": "Package Information",
+      "duration": "Duration",
+      "days": "Days",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+
+      "availableSeats": "Available Seats",
+      "participants": "Participants",
+      "rating": "Rating",
+      "reviews": "Reviews",
+
+      "description": "Package Description",
+      "englishDescription": "English Description",
+      "noDescription": "No description available",
+      "noEnglishDescription": "No English description available",
+
+      "includedServices": "Included Services",
+      "arabic": "Arabic",
+      "english": "English",
+      "noServices": "No services available",
+
+      "trips": "Trips Included",
+      "tripOrder": "Order",
+      "noTrips": "No trips associated with this package",
+
+      "hotels": "Hotels",
+      "noHotels": "No hotels associated with this package",
+      "pricePerNight": "Price / Night",
+      "nights": "Number of Nights",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+
+      "transport": "Transportation",
+      "noTransport": "No transportation associated with this package",
+      "route": "Route",
+      "capacity": "Capacity",
+      "company": "Company",
+      "pricePerTrip": "Price / Trip",
+
+      "creatorInformation": "Creation Information",
+      "creator": "Created By",
+      "createdAt": "Created At",
+      "updatedAt": "Last Updated",
+
+      "notFound": "Package not found",
+      "loadError": "An error occurred while loading package data"
+    }
+  },
+  "editPackage": "Edit Package",
+  "packageInformation": "Package Information",
+  "packageUpdateSuccess": "Package updated successfully",
+  "packageUpdateError": "An error occurred while updating the package"
 }

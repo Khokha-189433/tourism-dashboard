@@ -41,9 +41,9 @@ export default function EditTrip() {
                 is_featured: isFeatured,
             });
 
-            alert("تم تعديل الرحلة بنجاح");
-
-            navigate("/Trips");
+            navigate("/Trips", {
+                state: { message: "تم تعديل الرحلة بنجاح", severity: "success" },
+            });
 
         } catch (err) {
             console.log(err);

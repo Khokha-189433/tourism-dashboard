@@ -10,7 +10,6 @@ import {
   InputAdornment,
   MenuItem,
   Paper,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -27,7 +26,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import Alert from '@mui/material/Alert';
 import DeleteButton from "../../../components/UI/DeleteButton";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -51,9 +49,6 @@ export default function TripsTable() {
    const [error, setError] = useState(null);
    const location = useLocation();
    const navigate = useNavigate();
-   const [snackbarOpen, setSnackbarOpen] = useState(Boolean(location.state?.message));
-   const [snackbarMessage] = useState(location.state?.message || "");
-   const [snackbarSeverity] = useState(location.state?.severity || "success");
 
 
   // حالة الفلاتر في الشاشة
@@ -116,13 +111,6 @@ export default function TripsTable() {
       default:
         return "default";
     }
-  };
-
-  const handleSnackbarClose = (_, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
   };
 
   useEffect(() => {
@@ -348,16 +336,6 @@ export default function TripsTable() {
         </Table>
       </TableContainer>
       {/*  عرض رسالة لاضافة رحلة  */}
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

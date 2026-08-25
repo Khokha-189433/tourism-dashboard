@@ -195,16 +195,20 @@ return (
             </Box>
 
             <Box sx={{ display: "flex", gap: 1 }}>
-
-                  <IconButton color="warning" component={Link}  to={`/EditHotel/${hotelId}`}>
-                    <EditIcon />
-                  </IconButton>
-
-                <DeleteHotel hotelId={hotelId} onDeleted={() => {
-                  window.location.href = "/hotels";
-                }} />
-          
-             
+            <Button
+                variant="contained"
+                startIcon={<EditIcon />}
+                component={Link} 
+                to={`/EditHotel/${hotelId}`}
+                sx={{
+                  borderRadius: 3,
+                  px: 4,
+                  py: 1.3,
+                  textTransform: "none",
+                  }}
+              >
+                {t("edit")}
+              </Button>
 
             </Box>
 
@@ -466,9 +470,6 @@ return (
             </Box>
           ))}
 
-          <Box sx={{ textAlign: "center" }}>
-            <Button>عرض جميع التقييمات</Button>
-          </Box>
 
         </CardContent>
 

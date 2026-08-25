@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "../../../../api/refreshToken"
 import { useTranslation } from "react-i18next";
+import { useSnackbar } from "../../../../contexts/useSnackbar";
 
 import {
   Button,
@@ -20,6 +21,7 @@ export default function EditUser({
   onUserUpdated,
 }) {
   const { t } = useTranslation();
+  const { showSnackbar } = useSnackbar();
   const [formData, setFormData] = useState(() => ({
     role: user?.role || "",
     is_active: Boolean(user?.is_active ?? true),
@@ -46,13 +48,13 @@ export default function EditUser({
 
       handleClose();
 
-      alert(t("userUpdated"));
+      showSnackbar(t("userUpdated"), "success");
     } catch (err) {
       console.error(err);
 
-      alert(
-        err?.response?.data?.message ||
-          t("userUpdateError")
+      showSnackbar(
+        err?.response?.data?.message || t("userUpdateError"),
+        "error"
       );
     }
   };

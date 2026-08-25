@@ -49,7 +49,109 @@
   "statistics": "الإحصائيات",
   "availableRooms": "الغرف المتاحة",
   "price": "السعر",
-  "reviews": "آخر التقييمات"
+  "reviews": "آخر التقييمات",
+  "imageGallery": "معرض الصور",
+  "addImage": "إضافة صورة",
+  "uploadingImage": "جاري الرفع...",
+  "imageUploadError": "حدث خطأ أثناء رفع الصورة، يرجى المحاولة مرة أخرى."
+  ,"Transports": "وسائل النقل"
+  ,"manageTransports": "إدارة وسائل النقل السياحية"
+  ,"addTransport": "إضافة وسيلة نقل"
+  ,"totalTransports": "إجمالي وسائل النقل"
+  ,"activeTransports": "وسائل النقل النشطة"
+  ,"searchTransports": "البحث في وسائل النقل"
+  ,"transportName": "اسم وسيلة النقل"
+  ,"transportType": "نوع النقل"
+  ,"capacity": "السعة"
+  ,"pricePerTrip": "السعر للرحلة"
+  ,"passengers": "راكب"
+  ,"details": "التفاصيل"
+  ,"previous": "السابق"
+  ,"next": "التالي"
+  ,"transportTypes": {
+  "bus": "حافلة",
+  "minibus": "حافلة صغيرة",
+  "car": "سيارة",
+  "airplane": "طائرة",
+  "boat": "قارب",
+  "train": "قطار"
+}
+  ,"addNewTransport": "إضافة وسيلة نقل سياحية جديدة"
+  ,"transportInformation": "معلومات وسيلة النقل"
+  ,"transportNameArabic": "اسم وسيلة النقل بالعربية"
+  ,"transportNameEnglish": "اسم وسيلة النقل بالإنجليزية"
+  ,"transportDescriptionArabic": "وصف وسيلة النقل بالعربية"
+  ,"transportDescriptionEnglish": "وصف وسيلة النقل بالإنجليزية"
+  ,"companyName": "اسم الشركة"
+  ,"contactPhone": "رقم التواصل"
+  ,"saveTransport": "حفظ وسيلة النقل"
+  ,"requiredTransportFields": "يرجى تعبئة جميع حقول وسيلة النقل"
+  ,"transportCreated": "تمت إضافة وسيلة النقل بنجاح"
+  ,"transportCreateError": "حدث خطأ أثناء إضافة وسيلة النقل"
+  ,"invalidTransportNumbers": "يجب أن تكون السعة رقماً صحيحاً أكبر من صفر، وأن يكون السعر صفراً أو أكبر"
+  ,"transportDetails": "تفاصيل وسيلة النقل"
+  ,"transportDetailsDescription": "عرض معلومات وسيلة النقل بالتفصيل"
+  ,"transportDetailsError": "فشل تحميل تفاصيل وسيلة النقل"
+  ,"transportNotFound": "لم يتم العثور على وسيلة النقل"
+  ,"editTransport": "تعديل وسيلة النقل"
+  ,"editTransportDescription": "تعديل سعر وسيلة النقل"
+  ,"transportFetchError": "فشل تحميل بيانات وسيلة النقل"
+  ,"enterValidPrice": "يرجى إدخال سعر صحيح أكبر من صفر"
+  ,"transportUpdateError": "حدث خطأ أثناء تعديل وسيلة النقل"
+  ,"transportUpdated": "تم تعديل وسيلة النقل بنجاح"
+  ,"transportForm": {
+    "addTitle": "إضافة وسيلة نقل",
+    "addSubtitle": "إضافة وسيلة نقل جديدة إلى النظام",
+    "basicInformation": "المعلومات الأساسية",
+    "basicInformationSubtitle": "حدد نوع وسيلة النقل وسعتها",
+    "type": "نوع وسيلة النقل",
+    "types": {
+      "bus": "حافلة",
+      "car": "سيارة",
+      "boat": "قارب",
+      "flight": "طائرة",
+      "train": "قطار"
+    },
+    "capacity": "السعة وعدد الركاب",
+    "names": "أسماء وسيلة النقل",
+    "namesSubtitle": "أدخل الاسم بالعربية والإنجليزية",
+    "nameAr": "اسم وسيلة النقل بالعربية",
+    "nameArPlaceholder": "مثال: حافلة سياحية",
+    "nameEn": "اسم وسيلة النقل بالإنجليزية",
+    "nameEnPlaceholder": "Example: Tourist bus",
+    "description": "الوصف",
+    "descriptionSubtitle": "أضف وصفاً مختصراً لوسيلة النقل",
+    "descriptionAr": "الوصف بالعربية",
+    "descriptionArPlaceholder": "اكتب وصف وسيلة النقل بالعربية",
+    "descriptionEn": "الوصف بالإنجليزية",
+    "descriptionEnPlaceholder": "Write the transport description in English",
+    "priceInformation": "معلومات السعر",
+    "priceSubtitle": "حدد السعر والعملة لكل رحلة",
+    "price": "السعر لكل رحلة",
+    "currency": "العملة",
+    "companyInformation": "معلومات الشركة",
+    "companySubtitle": "أدخل بيانات الشركة ووسيلة التواصل",
+    "companyName": "اسم الشركة",
+    "companyPlaceholder": "مثال: شركة النقل السياحي",
+    "phone": "رقم الهاتف",
+    "createError": "حدث خطأ أثناء إضافة وسيلة النقل",
+    "created": "تمت إضافة وسيلة النقل بنجاح"
+  }
+  ,"Categories": "التصنيفات"
+  ,"manageCategories": "إدارة التصنيفات السياحية"
+  ,"addCategory": "إضافة تصنيف"
+  ,"totalCategories": "إجمالي التصنيفات"
+  ,"activeCategories": "التصنيفات النشطة"
+  ,"searchCategories": "البحث في التصنيفات"
+  ,"sortOrder": "ترتيب العرض"
+  ,"icon": "الأيقونة"
+  ,"mountainIcon": "جبل"
+  ,"beachIcon": "شاطئ"
+  ,"museumIcon": "متحف"
+  ,"campIcon": "مخيم"
+  ,"forestIcon": "غابة"
+  ,"categoryName": "اسم التصنيف"
+  ,"noCategoriesFound": "لم يتم العثور على تصنيفات"
   ,"filterTrips": "فلترة الرحلات",
   "searchTrip": "ابحث عن رحلة",
   "category": "التصنيف",
@@ -69,6 +171,26 @@
   "tripDeleted": "تم حذف الرحلة بنجاح",
   "tripDeleteError": "حدث خطأ أثناء حذف الرحلة",
   "back": "العودة",
+  "packageDetails": "تفاصيل الباقة",
+  "packageDetailsDescription": "عرض جميع معلومات الباقة والخدمات المرتبطة بها",
+  "packageFetchError": "فشل تحميل بيانات الباقة",
+  "packageNotFound": "لم يتم العثور على الباقة",
+  "overview": "نظرة عامة",
+  "bookNow": "احجز الآن",
+  "noDescription": "لا يوجد وصف",
+  "noServices": "لا توجد خدمات",
+  "endDate": "تاريخ النهاية",
+  "participants": "المشاركون",
+  "creator": "المنشئ",
+  "createdAt": "تاريخ الإنشاء",
+  "updatedAt": "آخر تحديث",
+  "noTrips": "لا توجد رحلات مرتبطة بهذه الباقة",
+  "noHotels": "لا توجد فنادق مرتبطة بهذه الباقة",
+  "checkIn": "تسجيل الدخول",
+  "checkOut": "تسجيل الخروج",
+  "route": "المسار",
+  "bookPackage": "حجز الباقة",
+  "noTransport": "لا توجد وسائل نقل مرتبطة بهذه الباقة",
   "addTrip": "إضافة رحلة",
   "addNewTrip": "إضافة رحلة سياحية جديدة",
   "createNewTrip": "إنشاء رحلة جديدة",
@@ -151,8 +273,181 @@
   "egyptExampleEnglish": "مثال: Egypt",
   "countryCodeExample": "مثال: EGY",
   "saveDestination": "حفظ الوجهة",
+  "editDestination": "تعديل الوجهة",
+  "editDestinationDescription": "تعديل بيانات الوجهة",
+  "destinationFetchError": "فشل تحميل بيانات الوجهة",
+  "countryCodeMustBeThreeCharacters": "يجب أن يتكون رمز الدولة من 3 أحرف",
+  "destinationUpdated": "تم تعديل الوجهة بنجاح",
+  "destinationUpdateError": "حدث خطأ أثناء تعديل الوجهة",
+  "destinationDetails": "تفاصيل الوجهة",
+  "destinationDetailsDescription": "عرض معلومات الوجهة",
+  "destinationNotFound": "لم يتم العثور على الوجهة",
+  "edit": "تعديل",
   "hotelLoadError": "فشل في تحميل بيانات الفندق",
   "hotelUpdated": "تم تعديل الفندق بنجاح",
   "hotelUpdateError": "حدث خطأ أثناء التعديل",
-  "saveChanges": "حفظ التغييرات"
+  "saveChanges": "حفظ التغييرات" ,
+  "addNewCategory": "إضافة تصنيف جديد",
+  "categoryInformation": "معلومات التصنيف",
+  "categoryNameArabic": "اسم التصنيف بالعربية",
+  "categoryNameEnglish": "اسم التصنيف بالإنجليزية",
+  "saveCategory": "حفظ التصنيف",
+  "requiredCategoryFields": "يرجى تعبئة جميع الحقول",
+  "categoryCreated": "تم إنشاء التصنيف بنجاح",
+  "categoryCreateError": "حدث خطأ أثناء إنشاء التصنيف",
+   "editCategory": "تعديل التصنيف",
+  "editCategoryDescription": "تعديل اسم التصنيف",
+  "updateCategory": "تحديث التصنيف",
+  "categoryUpdated": "تم تحديث التصنيف بنجاح",
+  "categoryUpdateError": "حدث خطأ أثناء تحديث التصنيف" ,
+  "Packages": "الباقات",
+  "packages": {
+    "title": "الباقات السياحية",
+    "subtitle": "إدارة جميع الباقات السياحية",
+    "addPackage": "إضافة باقة سياحية",
+    "search": "البحث في الباقات...",
+    "thumbnail": "الصورة المصغرة",
+    "name": "اسم الباقة",
+    "days": "أيام",
+    "destination": "الوجهة",
+    "category": "التصنيف",
+    "availableSeats": "المقاعد المتاحة",
+    "actions": "الإجراءات",
+    "noImage": "لا توجد صورة",
+    "noPackages": "لم يتم العثور على باقات",
+    "view": "عرض التفاصيل",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "confirmDelete": "هل أنت متأكد من حذف هذه الباقة؟",
+    "createSubtitle": "إنشاء باقة سياحية جديدة",
+
+    "basicInformation": "المعلومات الأساسية",
+
+    "titleAr": "اسم الباقة بالعربية",
+    "titleEn": "اسم الباقة بالإنجليزية",
+
+    "descriptionAr": "الوصف بالعربية",
+    "descriptionEn": "الوصف بالإنجليزية",
+    "priceAndDuration": "السعر والمدة",
+    "currency": "العملة",
+    "discountPrice": "السعر بعد الخصم",
+    "duration": "عدد الأيام",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "maxParticipants": "الحد الأقصى للمشاركين",
+
+    "includedServices": "الخدمات المشمولة",
+    "includedServicesAr": "الخدمات المشمولة بالعربية",
+    "includedServicesEn": "الخدمات المشمولة بالإنجليزية",
+
+    "trips": "الرحلات",
+    "selectTrips": "اختر الرحلات",
+    "noTrips": "لا توجد رحلات",
+
+    "hotels": "الفنادق",
+    "selectHotel": "اختر الفندق",
+    "nights": "الليالي",
+
+    "transports": "وسائل النقل",
+    "selectTransport": "اختر وسيلة النقل",
+    "routeAr": "مسار الرحلة بالعربية",
+    "routeEn": "مسار الرحلة بالإنجليزية",
+    "seats": "مقعد",
+
+    "select": "اختر",
+    "add": "إضافة",
+    "addTransport": "إضافة وسيلة النقل",
+    "remove": "حذف",
+
+    "settings": "إعدادات الباقة",
+    "status": "الحالة",
+    "published": "منشورة",
+    "draft": "مسودة",
+    "cancelled": "ملغاة",
+    "isFeatured": "باقة مميزة",
+
+    "create": "إنشاء الباقة",
+    "success": "تم إنشاء الباقة بنجاح",
+
+    "errors": {
+      "loadData": "حدث خطأ أثناء تحميل الرحلات والفنادق ووسائل النقل",
+      "titleAr": "يرجى إدخال اسم الباقة بالعربية",
+      "titleEn": "يرجى إدخال اسم الباقة بالإنجليزية",
+      "price": "يرجى إدخال السعر",
+      "pricePositive": "يجب أن يكون السعر أكبر من صفر",
+      "currency": "العملة يجب أن تكون SYP أو USD",
+      "discountPositive": "يجب أن يكون سعر الخصم أكبر من صفر",
+      "duration": "يرجى إدخال مدة الباقة",
+      "dates": "يرجى تحديد تاريخ البداية والنهاية",
+      "maxParticipants": "يرجى إدخال عدد المشاركين",
+      "hotelAlreadyAdded": "هذا الفندق مضاف بالفعل",
+      "transportAlreadyAdded": "وسيلة النقل هذه مضافة بالفعل",
+      "createFailed": "حدث خطأ أثناء إنشاء الباقة"
+    },
+     "details": {
+      "packageDetails": "تفاصيل الباقة",
+      "featured": "باقة مميزة",
+      "completed": "مكتملة",
+      "cancelled": "ملغاة",
+      "unknown": "غير محدد",
+
+      "bookPackage": "حجز الباقة",
+
+      "price": "السعر",
+      "discountPrice": "سعر الخصم",
+      "currency": "العملة",
+
+      "packageInformation": "معلومات الباقة",
+      "duration": "المدة",
+      "days": "أيام",
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ النهاية",
+
+      "availableSeats": "المقاعد المتاحة",
+      "participants": "المشاركون",
+      "rating": "التقييم",
+      "reviews": "مراجعة",
+
+      "description": "وصف الباقة",
+      "englishDescription": "الوصف بالإنجليزية",
+      "noDescription": "لا يوجد وصف",
+      "noEnglishDescription": "لا يوجد وصف باللغة الإنجليزية",
+
+      "includedServices": "الخدمات المشمولة",
+      "arabic": "العربية",
+      "english": "الإنجليزية",
+      "noServices": "لا توجد خدمات",
+
+      "trips": "الرحلات ضمن الباقة",
+      "tripOrder": "الترتيب",
+      "noTrips": "لا توجد رحلات مرتبطة بهذه الباقة",
+
+      "hotels": "الفنادق",
+      "noHotels": "لا توجد فنادق مرتبطة بهذه الباقة",
+      "pricePerNight": "السعر / ليلة",
+      "nights": "عدد الليالي",
+      "checkIn": "تسجيل الدخول",
+      "checkOut": "تسجيل الخروج",
+
+      "transport": "وسائل النقل",
+      "noTransport": "لا توجد وسائل نقل مرتبطة بهذه الباقة",
+      "route": "المسار",
+      "capacity": "السعة",
+      "company": "الشركة",
+      "pricePerTrip": "السعر / الرحلة",
+
+      "creatorInformation": "معلومات الإنشاء",
+      "creator": "المنشئ",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "آخر تحديث",
+
+      "notFound": "لم يتم العثور على الباقة",
+      "loadError": "حدث خطأ أثناء تحميل بيانات الباقة"
+    }
+  },"editPackage": "تعديل الباقة",
+  "packageInformation": "معلومات الباقة",
+  "packageUpdateSuccess": "تم تعديل الباقة بنجاح",
+  "packageUpdateError": "حدث خطأ أثناء تعديل الباقة"
+
+
 }

@@ -54,9 +54,9 @@ export default function EditHotel() {
 
     try {
       await api.put(`/hotels/${hotelId}`, hotelData);
-      alert(t("hotelUpdated"));
-
-      navigate('/hotels' );
+      navigate('/hotels', {
+        state: { message: t("hotelUpdated"), severity: "success" },
+      });
     } catch (error) {
       console.error(error);
       alert(t("hotelUpdateError"));

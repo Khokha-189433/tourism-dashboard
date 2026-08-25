@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Button } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import api from "../../api/refreshToken";
+import { useTranslation } from "react-i18next";
 
 // مكون عام لرفع صورة واحدة أو عدة صور يمكن استخدامه في أي صفحة داخل المشروع.
 export default function ImageUploader({
@@ -12,6 +13,7 @@ export default function ImageUploader({
   onUploaded,
   onUnauthorized,
 }) {
+  const { t } = useTranslation();
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
 
@@ -39,7 +41,7 @@ export default function ImageUploader({
         return;
       }
 
-      alert("حدث خطأ أثناء رفع الصورة، يرجى المحاولة مرة أخرى.");
+      alert(t("imageUploadError"));
     } finally {
       setUploading(false);
     }
@@ -52,7 +54,7 @@ export default function ImageUploader({
       startIcon={<UploadIcon />}
       disabled={uploading}
     >
-      {uploading ? "جاري الرفع..." : buttonText}
+      {uploading ? t("uploadingImage") : buttonText === "إضافة صورة" ? t("addImage") : buttonText}
       <input
         ref={inputRef}
         hidden

@@ -1,6 +1,6 @@
 import DeleteButton from "../../../../components/UI/DeleteButton"
 
-// زر حذف الفندق مع تأكيد العملية والتعامل مع طلب الحذف.
+// زر حذف التصنيف مع تأكيد العملية والتعامل مع طلب الحذف.
 export default function DeleteHotel({ id , onDeleted }) {
     return (
         <DeleteButton

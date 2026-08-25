@@ -20,7 +20,6 @@ import {
 
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useTranslation } from "react-i18next";
 
@@ -49,20 +48,7 @@ export default function Destinations() {
     fetchDestinations();
   }, []);
 
-
-  // const handleDelete = async (id) => {
-  //   if (!window.confirm("هل تريد حذف الوجهة؟")) return;
-
-  //   try {
-  //     await api.delete(`/destinations/${id}`);
-
-  //     setDestinations((prev) => prev.filter((item) => item.id !== id));
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
-    // إزالة الفندق المحذوف من القائمة مباشرة بعد نجاح طلب الحذف.
+    // إزالة الوجهة المحذوف من القائمة مباشرة بعد نجاح طلب الحذف.
 const handleDestDelete = (id) => {
   setDestinations((prev) => prev.filter((item) => item.id !== id));
 };
@@ -194,18 +180,9 @@ const handleDestDelete = (id) => {
                   pb: 2,
                 }}
               >
-                {/* <IconButton
-                  color="error"
-                  onClick={() => handleDelete(destination.id)}
-        
-                >
-                  <DeleteIcon />
-                </IconButton> */}
-                  {/*  اسم الملف الخاص بحذف الفندق مع ارسال ال id */}
-                  <DeleteDest id={destination.id} onDeleted={handleDestDelete} />
 
                 <IconButton
-                  color="warning"
+                  color="primary" component={Link} to={`/destinations/EditDestination/${destination.id}`}
                 >
                   <EditIcon />
                 </IconButton>
@@ -213,9 +190,8 @@ const handleDestDelete = (id) => {
                 <IconButton color="primary" component={Link} to={`/Destination/${destination.id}`} >
                     <VisibilityIcon />
                 </IconButton>
-
-
-                
+                {/*  اسم الملف الخاص بحذف التصنيف مع ارسال ال id */}
+                <DeleteDest id={destination.id} onDeleted={handleDestDelete} />
               </CardActions>
             </Card>
           </Grid>

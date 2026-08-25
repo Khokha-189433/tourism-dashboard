@@ -47,7 +47,7 @@ useEffect(() => {
   };
 
   loadHotels();
-}, []);
+}, [t]);
 
 // إزالة الفندق المحذوف من القائمة مباشرة بعد نجاح طلب الحذف.
 const handleHotelDeleted = (hotelId) => {
@@ -79,7 +79,7 @@ const handleHotelDeleted = (hotelId) => {
         sx={{ marginBlockEnd:4, justifycontent: "space-between", alignItems: "center" }}
       >
         <Typography variant="h4" fontWeight="bold">
-          {t("manageHotels")}
+          {t('manageHotels')}
         </Typography>
         <Divider />
   
@@ -101,7 +101,7 @@ const handleHotelDeleted = (hotelId) => {
             color: theme.palette.mode === "dark" ? "#fff" : "#000",     
           }}
         >
-         {t("addHotel")}
+         {t('addHotel')}
         </Button>
       
     
@@ -131,18 +131,18 @@ const handleHotelDeleted = (hotelId) => {
 
               }}
             >
-            <TableCell>{t("image")}</TableCell>
-            <TableCell>{t("name")}</TableCell>
-              <TableCell>{t("destination")}</TableCell>
-              <TableCell>{t("rating")}</TableCell>
+            <TableCell>{t('image')}</TableCell>
+            <TableCell>{t('name')}</TableCell>
+              <TableCell>{t('destination')}</TableCell>
+              <TableCell>{t('rating')}</TableCell>
  
-              <TableCell>{t("pricePerNight")}</TableCell>
-              <TableCell>{t("description")}</TableCell>
-              <TableCell>{t("address")}</TableCell>
+              <TableCell>{t('pricePerNight')}</TableCell>
+              <TableCell>{t('description')}</TableCell>
+              <TableCell>{t('address')}</TableCell>
             
                  
               <TableCell align="center">
-                  {t("actions")}
+                  {t('actions')}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -173,20 +173,20 @@ const handleHotelDeleted = (hotelId) => {
                         color: 'text.secondary',
                       }}
                     >
-                      {t("noImage")}
+                      {t('noImage')}
                     </Box>
                   )}
                 </TableCell>
                  {/*  اسم الفندق  */}
                 <TableCell>
-                  {i18n.language === "ar"
+                  {i18n.language === 'ar'
                     ? hotel.name_ar || hotel.name_en
                     : hotel.name_en || hotel.name_ar}
                 </TableCell>
                  {/*  الى اين متوجهين  */}
                 <TableCell>
                   {hotel?.Destination
-                      ? (i18n.language === "ar"
+                      ? (i18n.language === 'ar'
                           ? hotel.Destination.name_ar || hotel.Destination.name_en
                           : hotel.Destination.name_en || hotel.Destination.name_ar)
                       : "-"}
@@ -207,13 +207,13 @@ const handleHotelDeleted = (hotelId) => {
                 </TableCell>
                  {/* شرح بسيط عن الفندق */}
                 <TableCell>
-                  {i18n.language === "ar"
+                  {i18n.language === 'ar'
                     ? hotel.short_description_ar || hotel.description_ar || '-'
                     : hotel.short_description_en || hotel.description_en || '-'}
                 </TableCell>
                  {/* عنوان الفندق */}
                 <TableCell>
-                  {i18n.language === "ar"
+                  {i18n.language === 'ar'
                     ? hotel.address_ar || hotel.address_en || '-'
                     : hotel.address_en || hotel.address_ar || '-'}
                   {hotel.address || hotel.location || '-'}

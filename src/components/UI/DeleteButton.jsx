@@ -4,6 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import api from "../../api/refreshToken";
+import { useSnackbar } from "../../contexts/useSnackbar";
 
 export default function DeleteButton({
   endpoint,
@@ -15,6 +16,7 @@ export default function DeleteButton({
   tooltip = "حذف",
 }) {
   const [deleting, setDeleting] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
   const handleDelete = async () => {
     if (deleting || !window.confirm(confirmationMessage)) return;
@@ -23,10 +25,10 @@ export default function DeleteButton({
     try {
       await api.delete(endpoint);
       onDeleted?.(itemId);
-      window.alert(successMessage);
+      showSnackbar(successMessage, "success");
     } catch (error) {
       console.error(error);
-      window.alert(errorMessage);
+      showSnackbar(errorMessage, "error");
     } finally {
       setDeleting(false);
     }
