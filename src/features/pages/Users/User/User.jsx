@@ -1,360 +1,346 @@
 import React, { useEffect, useState } from "react";
-import api from "../../../../api/refreshToken"
-import { useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import api from "../../../../api/refreshToken";
 import EditUser from "./EditUser";
+
 // =========================
 // MUI COMPONENTS
 // =========================
 import {
   Box,
   Button,
+  Card,
+  CardContent,
+  Chip,
   CircularProgress,
-  MenuItem,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Container,
+  Divider,
   Typography,
-  // Dialog,
-  // DialogActions,
-  // DialogContent,
-  // DialogTitle,
-  // TextField,
-  Alert,
+  Avatar,
 } from "@mui/material";
-
-import { useTheme } from "@mui/material/styles";
 
 // =========================
 // ICONS
 // =========================
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
-import { useTranslation } from "react-i18next";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIcon from "@mui/icons-material/Phone";
+import BadgeIcon from "@mui/icons-material/Badge";
+import NumbersIcon from "@mui/icons-material/Numbers";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 // ======================================================================
-// COMPONENT USER
+// MAIN COMPONENT: User Details
 // ======================================================================
-
 export default function User() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  
+  // 🎯 الحصول على ID من الرابط (مثال: /User/3)
+  const { UserId } = useParams();
 
-  // ======================================================================
+  // =========================
   // STATES
-  // ======================================================================
-
-  // نخزن بيانات المستخدم الواحد
+  // =========================
   const [user, setUser] = useState(null);
-
-  // حالة التحميل أثناء جلب البيانات
   const [loading, setLoading] = useState(true);
-
-  // تخزين الأخطاء
   const [error, setError] = useState("");
-
-  // الثيم الحالي (Dark / Light)
-  const theme = useTheme();
-
-  // ======================================================================
-  // DIALOG STATES
-  // ======================================================================
-
-  // فتح وإغلاق نافذة التعديل
   const [openEdit, setOpenEdit] = useState(false);
 
-  // ======================================================================
-  // GET USER ID FROM LOCATION
-  // ======================================================================
-
-  // نستقبل البيانات القادمة من الصفحة السابقة
-  const location = useLocation();
-
-  // userId القادم من navigate
-  const userId = location.state?.UserId;
-
-  // التوكن الخاص بالأدمن
- 
-
-  // ======================================================================
+  // =========================
   // FETCH USER DATA
-  // ======================================================================
-
+  // =========================
   useEffect(() => {
-    if (!userId ) {
-      return;
-    }
+    if (!UserId) return;
 
-    // دالة جلب بيانات المستخدم
     const fetchUser = async () => {
       try {
-        // إرسال GET REQUEST
-        const response = await api.get(
-          `/admin/users/${userId}`
-        );
-
-        if (!response.data?.data) {
-          throw new Error("User not found.");
-        }
-
-        // تخزين بيانات المستخدم
-        setUser(response.data.data);
+        setLoading(true);
+        const response = await api.get(`/admin/users/${UserId}`);
+        setUser(response.data?.data || null);
       } catch (err) {
-
         console.error("Fetch Error:", err);
-
-        // تخزين رسالة الخطأ
-        setError(
-          err?.response?.data?.message ||
-          err.message ||
-          "Error Fetching User"
-        );
-
+        setError(err?.response?.data?.message || err.message || "فشل جلب بيانات المستخدم");
       } finally {
-
-        // إيقاف التحميل
         setLoading(false);
       }
     };
 
-    // تنفيذ الدالة
     fetchUser();
+  }, [UserId]);
 
-  }, [userId]);
-
-  // ======================================================================
-  // OPEN EDIT DIALOG  // دالة تحديث المستخدم بعد نجاح التعديل
-  // ======================================================================
-  
-  const handleEditClick = () => {
-    if (!user) {
-      return;
-    }
-
-    // فتح نافذة التعديل
-    setOpenEdit(true);
-  };
-
-  // ======================================================================
-  // HANDLE UPDATED USER DATA FROM EDIT DIALOG
-  // ======================================================================
+  // =========================
+  // HANDLE EDIT
+  // =========================
   const handleUserUpdated = (updatedUser) => {
-    if (!updatedUser) {
-      return;
-    }
-
     setUser(updatedUser);
     setOpenEdit(false);
   };
 
-  if (!userId) {
+  // =========================
+  // HELPER FUNCTIONS
+  // =========================
+  const getRoleColor = (role) => {
+    if (role === "admin") return "error";
+    if (role === "employee") return "info";
+    return "default";
+  };
+
+  const getStatusColor = (isActive) => (isActive ? "success" : "error");
+
+  const getStatusIcon = (isActive) =>
+    isActive ? <CheckCircleIcon fontSize="small" /> : <CancelIcon fontSize="small" />;
+
+  // =========================
+  // RENDER STATES
+  // =========================
+  if (!UserId) {
     return (
-      <Box sx={{ p: 5 }}>
-        <Alert severity="error">User ID is missing.</Alert>
-      </Box>
+      <Container sx={{ py: 6 }}>
+        <Typography color="error">معرف المستخدم مفقود من الرابط.</Typography>
+      </Container>
     );
   }
 
-
-  // ======================================================================
-  // LOADING SCREEN
-  // ======================================================================
-
   if (loading) {
-
     return (
+      <Container sx={{ py: 6 }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <Container sx={{ py: 6 }}>
+        <Typography color="error">{error || "المستخدم غير موجود"}</Typography>
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/Users")} sx={{ mt: 2 }}>
+          {t("back")}
+        </Button>
+      </Container>
+    );
+  }
+
+  // =========================
+  // MAIN UI
+  // =========================
+  return (
+    <Container maxWidth="lg" sx={{ py: 5 }}>
+      
+      {/* ===== Header ===== */}
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
-          mt: 10,
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
         }}
       >
-        <CircularProgress />
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/Users")}>
+          {t("back")}
+        </Button>
+
+        <Typography variant="h4" fontWeight="bold">
+          {t("userDetails")}
+        </Typography>
       </Box>
-    );
-  }
 
-  // ======================================================================
-  // ERROR SCREEN
-  // ======================================================================
-
-  if (error) {
-
-    return (
-      <Box sx={{ p: 5 }}>
-        <Alert severity="error">
-          {error}
-        </Alert>
-      </Box>
-    );
-  }
-
-  // ======================================================================
-  // MAIN RETURN
-  // ======================================================================
-
-  return (
-    <>
-
-      {/* ========================= */}
-      {/* HEADER */}
-      {/* ========================= */}
-
-    
-
-      {/* ========================= */}
-      {/* MAIN CONTENT */}
-      {/* ========================= */}
-
-      <Box
-        component="main"
+      {/* ===== Profile Card ===== */}
+      <Card
         sx={{
-          width: "100%",
+          borderRadius: 4,
+          boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+          overflow: "hidden",
         }}
       >
-
-        {/* ========================= */}
-        {/* PAGE TITLE */}
-        {/* ========================= */}
-
-        <Typography
-          variant="h4"
+        
+        {/* ===== Cover / Header Section ===== */}
+        <Box
           sx={{
-            p: 2,
+            bgcolor: "#22668edf",
+            p: 3,
+            display: "flex",
+            alignItems: "center",
+            gap: 3,
+            color: "white",
           }}
         >
-          {t("userManagement")}
+          <Avatar
+            sx={{
+              width: 80,
+              height: 80,
+              bgcolor: "background.paper",
+              color: "primary.main",
+              fontSize: 32,
+              fontWeight: "bold",
+            }}
+          >
+            {user.first_name?.charAt(0)}
+            {user.last_name?.charAt(0)}
+          </Avatar>
+
+          <Box>
+            <Typography variant="h5" fontWeight="bold">
+              {user.first_name} {user.last_name}
+            </Typography>
+
+            <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }} dir="ltr">
+              {user.email}
+            </Typography>
+
+            <Box sx={{ display: "flex", gap: 1, mt: 1.5, flexWrap: "wrap" }}>
+              <Chip
+                label={t(user.role) || user.role}
+                color={getRoleColor(user.role)}
+                size="small"
+                icon={<BadgeIcon />}
+              />
+              <Chip
+                label={user.is_active ? t("active") : t("inactive")}
+                color={getStatusColor(user.is_active)}
+                size="small"
+                icon={getStatusIcon(user.is_active)}
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        {/* ===== Details Section ===== */}
+        <CardContent sx={{ p: 4 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 3,
+            }}
+          >
+            <InfoCard
+              title={t("firstName") || "الاسم الكامل"}
+              value={`${user.first_name} ${user.last_name}`}
+              icon={<PersonIcon fontSize="small" />}
+            />
+
+            <InfoCard
+              title={t("email") || "البريد الإلكتروني"}
+              value={user.email}
+              icon={<EmailIcon fontSize="small" />}
+              dir="ltr"
+            />
+
+            <InfoCard
+              title={t("phone") || "رقم الهاتف"}
+              value={user.phone || "-"}
+              icon={<PhoneIcon fontSize="small" />}
+              dir="ltr"
+            />
+
+            <InfoCard
+              title={t("role") || "الدور"}
+              value={t(user.role) || user.role}
+              icon={<BadgeIcon fontSize="small" />}
+            />
+
+         
+
+            <InfoCard
+              title={t("accountStatus") || "حالة الحساب"}
+              value={user.is_active ? (t("active") || "نشط") : (t("inactive") || "معطل")}
+              icon={<CheckCircleIcon fontSize="small" color={user.is_active ? "success" : "error"} />}
+            />
+          </Box>
+
+          {/* ===== Action Buttons ===== */}
+          <Divider sx={{ my: 4 }} />
+
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              variant="contained"
+              startIcon={<EditIcon />}
+              onClick={() => setOpenEdit(true)}
+              sx={{ borderRadius: 3, px: 4 }}
+            >
+              {t("edit")}
+            </Button>
+
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/Users")}
+              sx={{ borderRadius: 3, px: 4 }}
+            >
+              {t("back")}
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* ===== Edit Dialog ===== */}
+      <EditUser
+        key={`edit-${user.id}`}
+        open={openEdit}
+        handleClose={() => setOpenEdit(false)}
+        user={user}
+        onUserUpdated={handleUserUpdated}
+      />
+    </Container>
+  );
+}
+
+// ======================================================================
+// HELPER COMPONENT: InfoCard
+// ======================================================================
+function InfoCard({ title, value, icon, dir = "rtl" }) {
+  return (
+    <Box
+      sx={{
+        p: 2.5,
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 3,
+        bgcolor: "background.default",
+        transition: "transform 0.2s, box-shadow 0.2s",
+        "&:hover": {
+          transform: "translateY(-2px)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+        },
+      }}
+    >
+      {/* Title with Icon */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+        {icon && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "primary.main",
+              flexShrink: 0,
+            }}
+          >
+            {icon}
+          </Box>
+        )}
+        <Typography variant="body2" color="text.secondary" fontWeight="medium">
+          {title}
         </Typography>
-
-        {/* ========================= */}
-        {/* TABLE */}
-        {/* ========================= */}
-
-        <TableContainer
-          component={Paper}
-          sx={{
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? "#13171a"
-        : "#fff",
-
-    borderRadius: 3,
-    boxShadow: 3,
-  }}
-        >
-
-          <Table>
-
-            {/* ========================= */}
-            {/* TABLE HEADER */}
-            {/* ========================= */}
-
-            <TableHead >
-              <TableRow>
-
-                <TableCell>{t("id")}</TableCell>
-
-                <TableCell>
-                  {t("firstName")}
-                </TableCell>
-
-                <TableCell>
-                  {t("lastName")}
-                </TableCell>
-
-                <TableCell>{t("email")}</TableCell>
-
-                <TableCell>{t("role")}</TableCell>
-
-                <TableCell>{t("phone")}</TableCell>
-
-                <TableCell>{t("status")}</TableCell>
-
-                <TableCell align="center">
-                  {t("updateUser")}
-                </TableCell>
-
-              </TableRow>
-            </TableHead>
-
-            {/* ========================= */}
-            {/* TABLE BODY */}
-            {/* ========================= */}
-
-            <TableBody>
-
-              <TableRow key={user.id}>
-
-                <TableCell>
-                  {user.id}
-                </TableCell>
-
-                <TableCell>
-                  {user.first_name}
-                </TableCell>
-
-                <TableCell>
-                  {user.last_name}
-                </TableCell>
-
-                <TableCell>
-                  {user.email}
-                </TableCell>
-
-                <TableCell>
-                  {user.role}
-                </TableCell>
-
-                <TableCell>
-                  {user.phone}
-                </TableCell>
-
-                <TableCell>
-                  {user.is_active ? t("active") : t("inactive")}
-                </TableCell>
-
-                {/* ========================= */}
-                {/* EDIT BUTTON */}
-                {/* ========================= */}
-
-                <TableCell align="center">
-
-                  <EditIcon
-                    color="primary"
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                    // //////////////////////////////////////////////////////////////////////////////////
-                    onClick={handleEditClick}
-                  />
-
-                </TableCell>
-
-              </TableRow>
-
-            </TableBody>
-
-          </Table>
-
-        </TableContainer>
-
-        {/* ====================================================================== */}
-        {/* EDIT DIALOG */}
-        {/* ====================================================================== */}
-
-       
-        <EditUser
-            key={`${openEdit}-${user?.id ?? "new"}`}
-            open={openEdit}
-            handleClose={() => setOpenEdit(false)}
-            user={user}
-            userId={userId}
-            onUserUpdated={handleUserUpdated}
-        />
-
       </Box>
-    </>
+
+      {/* Value */}
+      <Typography variant="h6" fontWeight="bold" dir={dir} sx={{ wordBreak: "break-word" }}>
+        {value || "-"}
+      </Typography>
+    </Box>
   );
 }

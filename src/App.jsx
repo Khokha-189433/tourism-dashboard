@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import {  Navigate } from "react-router-dom";
 ////////////////////////////////////////////////////
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,8 +46,23 @@ import Packages from "./features/pages/Packages/Packages";
 import Package from "./features/pages/Packages/Package";
 import CreatePackage from "./features/pages/Packages/CUD_Packages/CraetePackages";
 import EditPackage from "./features/pages/Packages/CUD_Packages/EditePackages";
-
-
+/////////////////////////////////
+import Bookings from "./features/pages/Bookings/Bookings";
+import Booking from "./features/pages/Bookings/Booking";
+////////////////////////////////
+import Reviews from "./features/pages/Reviews/Reviews";
+///////////////////////////////
+import Articles from "./features/pages/Articles/Articles"
+import Article from "./features/pages/Articles/Article"
+import CreateArticle from "./features/pages/Articles/CUD_Articles/CreateArticle";
+import EditArticle from "./features/pages/Articles/CUD_Articles/EditArticle";
+/////////////////////////////
+import Payments from "./features/pages/Payments/Payments";
+import Payment from "./features/pages/Payments/Payment";
+////////////////////////////
+import Reports from "./features/pages/Reports/Reports";
+///////////////////////////
+import AuditLogs from "./features/pages/AuditLogs/AuditLogs";
 function App() {
   //////////Translate////////////
     const { i18n } = useTranslation();
@@ -87,48 +104,171 @@ function App() {
       <ColorModeContext.Provider value={{ toggleColorMode }}>
         <CssBaseline />
         <div className="App">
-          <Routes>
+                  <Routes>
+            
             <Route path="/" element={<Login />} />
+            <Route path="/Trip/:tripId" element={<Trip />} />
+
+            {/*   الصفحات المحمية (تستخدم Header كـ Layout) */}
             <Route element={<Header />}>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="Users" element={<Users />} />
-              <Route path="/User" element={<User />} />
-              {/* Routes for Trips */}
-              <Route path="/Trips" element={<Trips />} />
-              <Route path="/Trip/:tripId" element={<Trip />} />
-              <Route path="/CreateTrip" element={<CreateTrip />} />
-              <Route path="/EditTrip/:tripId" element={<EditTrip />} />
-              {/* Routes for Hotels */}
-              <Route path="/Hotels" element={<Hotels />} />
-              <Route path="/Hotel/:hotelId" element={<Hotel />} />
-              <Route path="/CreateHotel" element={<CreateHotel />} />
-              <Route path="/EditHotel/:hotelId" element={<EditHotel />} />
-               {/* Routes for Destinations */}
-               <Route path="/Destinations" element={<Destinations />} />
-               <Route path="/Destination/:destinationId" element={<Destination />} />
-               <Route path="/destinations/CreateDestinations"  element={<CreateDestinations />} />
-               <Route path="/destinations/EditDestination/:destinationId"  element={<EditDestination />} />
-               {/* Routes for Categories  */}
-               <Route path="/Categories" element={<Categories />} />
-               <Route path="/Category/:categoryId" element={<Category />} />
-               <Route path="/Categories/CreateCategory"  element={<CreateCategory />} />
-               <Route path="/Categories/EditCategory/:categoryId" element={<EditCategory />} />
-                {/* Routes for Transports  */}
-               <Route path="/Transports" element={<Transports />} />
-               <Route path="/Transport/:transportId" element={<Transport />} />
-               <Route path="/Transports/CreateTransport" element={<CreateTransport />} />
-               <Route path="/Transports/EditTransport/:transportId" element={<EditTransport />} />
-                {/* Routes for Packages  */} 
-               <Route path="/Packages" element={<Packages />} />
-               <Route path="/Package/:packageId" element={<Package />} />
-               <Route path="/Packages/CreatePackage" element={<CreatePackage />} />
-               <Route path="/Packages/EditPackage/:packageId" element={<EditPackage />} />
-               <></>
+              
+              {/*  لوحة التحكم (مدير + موظف) */}
+              <Route path="dashboard" element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+
+              {/*  المستخدمين (مدير فقط) */}
+              <Route path="/Users" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Users /></ProtectedRoute>
+              } />
+              <Route path="/User/:UserId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><User /></ProtectedRoute>
+              } />
+            
+              {/*  الرحلات (مدير فقط) */}
+              <Route path="/Trips" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Trips /></ProtectedRoute>
+              } />
+              <Route path="/Trips/CreateTrip" element={
+                <ProtectedRoute allowedRoles={["admin"]}><CreateTrip /></ProtectedRoute>
+              } />
+              <Route path="/EditTrip/:tripId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><EditTrip /></ProtectedRoute>
+              } />
+
+              {/* لفنادق (مدير فقط) */}
+              <Route path="/Hotels" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Hotels /></ProtectedRoute>
+              } />
+              <Route path="/Hotel/:hotelId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Hotel /></ProtectedRoute>
+              } />
+              <Route path="/CreateHotel" element={
+                <ProtectedRoute allowedRoles={["admin"]}><CreateHotel /></ProtectedRoute>
+              } />
+              <Route path="/EditHotel/:hotelId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><EditHotel /></ProtectedRoute>
+              } />
+
+              {/*  الوجهات (مدير فقط) */}
+              <Route path="/Destinations" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Destinations /></ProtectedRoute>
+              } />
+              <Route path="/Destination/:destinationId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Destination /></ProtectedRoute>
+              } />
+              <Route path="/destinations/CreateDestinations" element={
+                <ProtectedRoute allowedRoles={["admin"]}><CreateDestinations /></ProtectedRoute>
+              } />
+              <Route path="/destinations/EditDestination/:destinationId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><EditDestination /></ProtectedRoute>
+              } />
+
+              {/*  التصنيفات (مدير فقط) */}
+              <Route path="/Categories" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Categories /></ProtectedRoute>
+              } />
+              <Route path="/Category/:categoryId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Category /></ProtectedRoute>
+              } />
+              <Route path="/Categories/CreateCategory" element={
+                <ProtectedRoute allowedRoles={["admin"]}><CreateCategory /></ProtectedRoute>
+              } />
+              <Route path="/Categories/EditCategory/:categoryId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><EditCategory /></ProtectedRoute>
+              } />
+
+              {/*  النقل (مدير فقط) */}
+              <Route path="/Transports" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Transports /></ProtectedRoute>
+              } />
+              <Route path="/Transport/:transportId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Transport /></ProtectedRoute>
+              } />
+              <Route path="/Transports/CreateTransport" element={
+                <ProtectedRoute allowedRoles={["admin"]}><CreateTransport /></ProtectedRoute>
+              } />
+              <Route path="/Transports/EditTransport/:transportId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><EditTransport /></ProtectedRoute>
+              } />
+
+
+              {/*  الباقات (مدير فقط) */}
+              <Route path="/Packages" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Packages /></ProtectedRoute>
+              } />
+              <Route path="/Package/:packageId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><Package /></ProtectedRoute>
+              } />
+              <Route path="/Packages/CreatePackage" element={
+                <ProtectedRoute allowedRoles={["admin"]}><CreatePackage /></ProtectedRoute>
+              } />
+              <Route path="/Packages/EditPackage/:packageId" element={
+                <ProtectedRoute allowedRoles={["admin"]}><EditPackage /></ProtectedRoute>
+              } />
+                
+
+              {/*  الحجوزات (مدير + موظف) */}
+              <Route path="/Bookings" element={
+                <ProtectedRoute allowedRoles={["admin", "employee"]}><Bookings /></ProtectedRoute>
+              } />
+              <Route path="/Booking/:bookingId" element={
+                <ProtectedRoute allowedRoles={["admin", "employee"]}><Booking /></ProtectedRoute>
+              } />
+
+              {/* (مدير + موظف  (التقييمات  */}
+                <Route path="/Reviews" element={
+                <ProtectedRoute allowedRoles={["admin", "employee"]}><Reviews /></ProtectedRoute>
+              } />
+               
+
+               {/*  ( المقالات  ( مدير فقط */}
+                  <Route path="/Articles" element={
+                <ProtectedRoute allowedRoles={["admin", "employee"]}><Articles /></ProtectedRoute>
+              } />
+                 <Route path="/Article/:articleId" element={
+                <ProtectedRoute allowedRoles={["admin", "employee"]}><Article /></ProtectedRoute>
+              } />
+              <Route path="/Articles/CreateArticle" element={
+                <ProtectedRoute allowedRoles={["admin", "employee"]}><CreateArticle /></ProtectedRoute>
+              } />
+              <Route path="/Articles/EditArticle/:articleId" element={
+                <ProtectedRoute allowedRoles={["admin" , "employee"]}><EditArticle /></ProtectedRoute>
+              } />
+               {/*  (الدفع   (المدير فقط  */}
+               <Route path="/Payments" element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <Payments />
+              </ProtectedRoute>
+              } />
+
+              <Route path="/Payment/:PaymentId" element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <Payment /> {/* سنبنيه في الخطوة التالية */}
+              </ProtectedRoute>
+              } />
+                 "   التقارير المالية  (المدير فقط ) "
+              <Route path="/Reports" element={
+              <ProtectedRoute allowedRoles={["admin", "employee"]}>
+                <Reports />
+              </ProtectedRoute>
+              } />
+              {/*    */}
+              <Route path="/AuditLogs" element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AuditLogs />
+                </ProtectedRoute>
+                 } />
+  
 
 
 
-               <Route  />   
             </Route>
+
+            {/*  3. المسار الافتراضي (404) - يمنع المسارات العشوائية */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </ColorModeContext.Provider>

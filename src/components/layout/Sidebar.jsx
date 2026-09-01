@@ -25,8 +25,14 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CategoryIcon from '@mui/icons-material/Category';
 import CommuteIcon from '@mui/icons-material/Commute';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
-
-
+import BeenhereIcon from '@mui/icons-material/Beenhere';
+import StarIcon from '@mui/icons-material/Star';
+import PaymentsIcon from '@mui/icons-material/Payments';
+import ArticleIcon from '@mui/icons-material/Article';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import HistoryIcon from '@mui/icons-material/History';
+import { Tooltip} from "@mui/material";
+import PaidIcon from '@mui/icons-material/Paid';
 // React Router للتنقل بين الصفحات
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -38,6 +44,8 @@ import LogOut from "../../features/LogOut/LogOut";
 
 // مكتبة الترجمة
 import { useTranslation } from "react-i18next";
+//  استيراد useAuth للصلاحيات
+import { useAuth } from "../../contexts/AuthContext";
 
 // ===================================
 // عرض القائمة الجانبية عند فتحها
@@ -96,7 +104,16 @@ const Drawer = styled(MuiDrawer, {
       style: {
         ...openedMixin(theme),
 
-        "& .MuiDrawer-paper": openedMixin(theme),
+        "& .MuiDrawer-paper": {
+          ...openedMixin(theme),
+          // 🎨 إخفاء Scrollbar مع الحفاظ على التمرير
+          overflowY: "auto",
+          "&::-webkit-scrollbar": {
+            display: "none", // Chrome, Safari, Opera
+          },
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // IE and Edge
+        },
       },
     },
 
@@ -106,7 +123,16 @@ const Drawer = styled(MuiDrawer, {
       style: {
         ...closedMixin(theme),
 
-        "& .MuiDrawer-paper": closedMixin(theme),
+        "& .MuiDrawer-paper": {
+          ...closedMixin(theme),
+          // 🎨 إخفاء Scrollbar عند الإغلاق أيضاً
+          overflowY: "auto",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        },
       },
     },
   ],
@@ -143,57 +169,128 @@ function Sidebar({ open, handleDrawerClose }) {
   // معرفة الصفحة الحالية
   const location = useLocation();
 
+  // 🎯 الحصول على بيانات المستخدم والدور
+  const { user } = useAuth();
+
   // ===================================
   // عناصر القائمة الجانبية
   // كل عنصر يحتوي:
-  // اسم - أيقونة - رابط
+  // اسم - أيقونة - رابط - الأدوار المسموحة
   // ===================================
-  const menuItems = [
+  const allMenuItems = [
     {
       text: t("dashboard"),
       Icon: <InboxIcon />,
       path: "/dashboard",
+      roles: ["admin", "employee"], // المدير والموظف
+      title:  t("dashboard")
     },
 
     {
       text: t("users"),
       Icon: <PeopleAltIcon />,
       path: "/Users",
+      roles: ["admin"], // المدير فقط
+      title: t("users"),
     },
 
     {
       text: t("trips"),
       Icon: <LocalAirportRoundedIcon />,
       path: "/trips",
+      roles: ["admin"], // المدير فقط
+      title: t("trips")
     },
 
     {
       text: t("hotels"),
       Icon: <LocalHotelRoundedIcon />,
       path: "/Hotels",
+      roles: ["admin"], // المدير فقط
+      title: t("hotels")
     },
 
     {
       text: t("destinations"),
       Icon: <LocationOnOutlinedIcon />,
       path: "/Destinations",
+      roles: ["admin"], // المدير فقط
+      title: t("destinations")
     },
-     {
+
+    {
       text: t("Categories"),
       Icon: <CategoryIcon />,
       path: "/Categories",
-    } ,
+      roles: ["admin"], // المدير فقط
+      title: t("Categories")
+    },
+
     {
       text: t("Transports"),
       Icon: <CommuteIcon />,
       path: "/Transports",
+      roles: ["admin"], // المدير فقط
+      title: t("Transports")
     },
+
     {
       text: t("Packages"),
       Icon: <Inventory2Icon />,
       path: "/Packages",
-    }
-  ];
+      roles: ["admin"], // المدير فقط
+      title: t("Packages")
+    },
+
+    {
+      text: t("bookings"),
+      Icon: <BeenhereIcon />,
+      path: "/Bookings",
+      roles: ["admin", "employee"], // المدير والموظف
+      title: t("bookings")
+    },
+
+    //  إضافة عناصر جديدة حسب الـ API
+    {
+      text: t("reviews"),
+      Icon: <StarIcon />,
+      path: "/Reviews",
+      roles: ["admin", "employee"], // المدير والموظف
+      title: t("reviews")
+    },
+    {
+       text: t("Payments"),
+      Icon: <PaidIcon />,
+      path: "/Payments",
+      roles: ["admin"], // المدير فقط
+      title:t("Payments")
+    },
+    {
+      text: t("Articles"),
+      Icon: <ArticleIcon />,
+      path: "/Articles",
+      roles: ["admin", "employee"],
+      title: t("Articles")
+    },
+    {
+      text: t("reports"),
+      Icon: <BarChartIcon />,
+      path: "/Reports",
+      roles: ["admin"], // المدير فقط
+      title:t("reports")
+    },
+    {
+      text: t("auditLogs"),
+      Icon: <HistoryIcon />,
+      path: "/AuditLogs",
+      roles: ["admin"], // المدير فقط
+      title:t("auditLogs")
+    },  
+    ];
+  //  فلترة العناصر حسب دور المستخدم الحالي
+  const menuItems = allMenuItems.filter((item) =>
+    item.roles.includes(user?.role)
+  );
 
   return (
     <>
@@ -246,6 +343,7 @@ function Sidebar({ open, handleDrawerClose }) {
               >
 
                 {/* الأيقونة */}
+                 <Tooltip title={item.title}>
                 <ListItemIcon
                   sx={{
                     color: "rgba(136,189,224,.95)",
@@ -253,7 +351,7 @@ function Sidebar({ open, handleDrawerClose }) {
                 >
                   {item.Icon}
                 </ListItemIcon>
-
+                </Tooltip>
                 {/* اسم الصفحة */}
                 <ListItemText
 
@@ -273,9 +371,7 @@ function Sidebar({ open, handleDrawerClose }) {
                         },
                   ]}
                 />
-
               </ListItemButton>
-
             </ListItem>
 
           ))}

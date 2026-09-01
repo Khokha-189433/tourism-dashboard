@@ -1,23 +1,27 @@
-import React, { useState } from "react";
-import TripOriginIcon from '@mui/icons-material/TripOrigin';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import React, { useState, useEffect } from "react";
+import TripOriginIcon from "@mui/icons-material/TripOrigin";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
   Checkbox,
+  FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
+  IconButton,
+  InputLabel,
   MenuItem,
+  Select,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
-///////////////////////////////////
-
-/////////////////////////////////
-
-
 
 import { useNavigate } from "react-router-dom";
 import api from "../../../../api/refreshToken";
@@ -27,137 +31,268 @@ const CreateTrip = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+
+  // ✅ حالات القوائم المنسدلة (Dropdowns)
+  const [categories, setCategories] = useState([]);
+  const [destinations, setDestinations] = useState([]);
+
+  // ✅ حالة البرنامج اليومي (الأيام)
+  const [programs, setPrograms] = useState([]);
+
+  // ✅ حالة التنبيهات
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  // ✅ البيانات الأساسية للرحلة
   const [formData, setFormData] = useState({
     title_ar: "",
     title_en: "",
-
     description_ar: "",
     description_en: "",
-
     short_description_ar: "",
     short_description_en: "",
 
-    // category_id: "",
-    // destination_id: "",
+    category_id: "",
+    destination_id: "",
 
     price: "",
     discount_price: "",
-
-    currency: "USD",
+    currency: "SYP",
 
     duration_days: "",
-
     max_participants: "",
 
-    status: "published",
+    start_date: "",
+    end_date: "",
 
+    departure_location_ar: "",
+    departure_location_en: "",
+
+    included_services_ar: "",
+    included_services_en: "",
+    excluded_services_ar: "",
+    excluded_services_en: "",
+
+    cancellation_policy_ar: "",
+    cancellation_policy_en: "",
+
+    status: "draft",
     is_featured: false,
   });
 
-  // تغيير القيم
-  const handleChange = (e) => {
-    //    اذا كان العنصر من نوع type="checkbox" => استخدم checked، وإلا استخدم value في حالة العناصر الأخرى مثل النصوص والأرقام. 
-    // تعتبر ال name هي المفتاح الذي يحدد أي حقل من formData سيتم تحديثه، بينما value أو checked هو القيمة الجديدة التي سيتم تعيينها لهذا الحقل.
-    const { name, value, checked, type } = e.target;
+  // ============================================================
+  // 🚀 جلب التصنيفات والوجهات عند تحميل الصفحة
+  // ============================================================
+  useEffect(() => {
+    const fetchDropdowns = async () => {
+      try {
+        const [catRes, destRes] = await Promise.all([
+          api.get("/categories"),
+          api.get("/destinations"),
+        ]);
+        setCategories(catRes.data?.data || catRes.data || []);
+        setDestinations(destRes.data?.data || destRes.data || []);
+      } catch (error) {
+        console.error("خطأ في جلب القوائم:", error);
+      }
+    };
+    fetchDropdowns();
+  }, []);
 
+  // ============================================================
+  // 📝 معالجة تغيير الحقول الأساسية
+  // ============================================================
+  const handleChange = (e) => {
+    const { name, value, checked, type } = e.target;
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
   };
 
-  // إرسال البيانات
+  // ============================================================
+  // 📅 دوال إدارة البرنامج اليومي (Programs)
+  // ============================================================
+  const addDay = () => {
+    setPrograms([
+      ...programs,
+      {
+        day_number: programs.length + 1,
+        title_ar: "",
+        title_en: "",
+        description_ar: "",
+        description_en: "",
+        meals_included: {
+          breakfast: false,
+          lunch: false,
+          dinner: false,
+        },
+      },
+    ]);
+  };
+
+  const removeDay = (index) => {
+    const updated = programs
+      .filter((_, i) => i !== index)
+      .map((p, i) => ({ ...p, day_number: i + 1 })); // إعادة ترقيم الأيام
+    setPrograms(updated);
+  };
+
+  const handleProgramChange = (index, field, value) => {
+    const updated = [...programs];
+    updated[index][field] = value;
+    setPrograms(updated);
+  };
+
+  const handleMealChange = (index, meal) => {
+    const updated = [...programs];
+    updated[index].meals_included[meal] = !updated[index].meals_included[meal];
+    setPrograms(updated);
+  };
+
+  // ============================================================
+  // ✅ دالة التحقق من البيانات
+  // ============================================================
+  const validateForm = () => {
+    if (!formData.title_ar || !formData.title_en) {
+      setSnackbar({
+        open: true,
+        message: "العنوان باللغتين مطلوب",
+        severity: "error",
+      });
+      return false;
+    }
+
+    if (!formData.category_id || !formData.destination_id) {
+      setSnackbar({
+        open: true,
+        message: "يجب اختيار التصنيف والوجهة",
+        severity: "error",
+      });
+      return false;
+    }
+
+    if (!formData.price) {
+      setSnackbar({
+        open: true,
+        message: "السعر مطلوب",
+        severity: "error",
+      });
+      return false;
+    }
+
+    if (!formData.duration_days || !formData.max_participants) {
+      setSnackbar({
+        open: true,
+        message: "المدة وعدد المشاركين مطلوبان",
+        severity: "error",
+      });
+      return false;
+    }
+
+    if (!formData.start_date || !formData.end_date) {
+      setSnackbar({
+        open: true,
+        message: "تاريخا البدء والانتهاء مطلوبان",
+        severity: "error",
+      });
+      return false;
+    }
+
+    if (new Date(formData.end_date) <= new Date(formData.start_date)) {
+      setSnackbar({
+        open: true,
+        message: "تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء",
+        severity: "error",
+      });
+      return false;
+    }
+
+    if (programs.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "يجب إضافة يوم واحد على الأقل في البرنامج",
+        severity: "error",
+      });
+      return false;
+    }
+
+    // التحقق من أن كل يوم له عنوان
+    const hasEmptyDay = programs.some(
+      (p) => !p.title_ar || !p.title_en
+    );
+    if (hasEmptyDay) {
+      setSnackbar({
+        open: true,
+        message: "يجب إدخال عنوان كل يوم باللغتين",
+        severity: "error",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  // ============================================================
+  // 🚀 إرسال البيانات إلى الـ API
+  // ============================================================
   const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     try {
       setLoading(true);
 
-      // التحقق من الحقول المطلوبة
-      if (!formData.title_ar || !formData.title_en) {
-        alert(t("requiredTitle"));
-        setLoading(false);
-        return;
-      }
-
-      if (!formData.short_description_ar || !formData.short_description_en) {
-        alert(t("requiredShortDescription"));
-        setLoading(false);
-        return;
-      }
-
-      if (!formData.price) {
-        alert(t("requiredPrice"));
-        setLoading(false);
-        return;
-      }
-
-      if (!formData.currency) {
-        alert(t("requiredCurrency"));
-        setLoading(false);
-        return;
-      }
-
-      if (!formData.duration_days) {
-        alert(t("requiredDuration"));
-        setLoading(false);
-        return;
-      }
-
-      if (!formData.max_participants) {
-        alert(t("requiredParticipants"));
-        setLoading(false);
-        return;
-      }
-
-      //
-     /// تجهيز البيانات للإرسال والتأكد من تحويل الأنواع بشكل صحيح 
       const payload = {
         ...formData,
+        category_id: Number(formData.category_id),
+        destination_id: Number(formData.destination_id),
         price: Number(formData.price),
-        discount_price: formData.discount_price ? Number(formData.discount_price) : null,
+        discount_price: formData.discount_price
+          ? Number(formData.discount_price)
+          : null,
         duration_days: Number(formData.duration_days),
         max_participants: Number(formData.max_participants),
         is_featured: Boolean(formData.is_featured),
+        programs: programs, // ← البرنامج اليومي
       };
 
-      console.log("إرسال البيانات:", payload);
+      console.log("📤 Payload:", payload);
 
-      const response = await api.post(
-        "/trips",
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-
-          },
-        }
-      );
-
-      console.log("response.data:", response.data);
-
-      
-
-   ///هذا السطر ينقل المستخدم من صفحة إنشاء الرحلة إلى صفحة عرض الرحلات ويُمرّر معه رسالة نجاح.
-      navigate("/Trips", {  // هذا ينقل التطبيق إلى المسار /Trips  //يستخدم react-router-dom، لذلك يحدث التنقل داخل التطبيق بدون إعادة تحميل الصفحة.
-        state: {
-          message: t("tripCreated"),
-          severity: "success",
-        },
+      await api.post("/trips", payload, {
+        headers: { "Content-Type": "application/json" },
       });
+
+      setSnackbar({
+        open: true,
+        message: "✅ تم إنشاء الرحلة بنجاح",
+        severity: "success",
+      });
+
+      // الانتقال بعد ثانيتين لإظهار رسالة النجاح
+      setTimeout(() => {
+        navigate("/Trips", {
+          state: { message: "تم إنشاء الرحلة بنجاح", severity: "success" },
+        });
+      }, 1500);
     } catch (error) {
-      console.error("خطأ مفصل:", error.response?.data || error.message);
-    
+      console.error("❌ خطأ مفصل:", error.response?.data || error.message);
+      setSnackbar({
+        open: true,
+        message:
+          error.response?.data?.message || "حدث خطأ أثناء إنشاء الرحلة",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        p: 5,
-      }}
-    >
+    <Box sx={{ minHeight: "100vh", p: 5 }}>
+      {/* الهيدر */}
       <Box
         sx={{
           display: "flex",
@@ -182,64 +317,40 @@ const CreateTrip = () => {
               gap: 1,
             }}
           >
-            <TripOriginIcon
-              sx={{
-                color: "#6ea3dc",
-                fontSize: 30,
-              }}
-            />
-
+            <TripOriginIcon sx={{ color: "#6ea3dc", fontSize: 30 }} />
             <Typography variant="h4" fontWeight="bold">
               {t("addTrip")}
             </Typography>
           </Box>
-
-          <Typography color="text.secondary">
-            {t("addNewTrip")}
-          </Typography>
+          <Typography color="text.secondary">{t("addNewTrip")}</Typography>
         </Box>
       </Box>
 
-
-
-
-
-
-
-
-
-
-
-      <Card
-        sx={{
-          maxWidth: 1200,
-          mx: "auto",
-          borderRadius: 4,
-        }}
-      >
+      <Card sx={{ maxWidth: 1200, mx: "auto", borderRadius: 4 }}>
         <CardContent>
-
-          {/* العنوان */}
-          <Typography  mb={4} sx={{margin:4 , fontSize:27 , color:"#4286ae"}}>
+          <Typography
+            mb={4}
+            sx={{ margin: 4, fontSize: 27, color: "#4286ae" }}
+          >
             {t("createNewTrip")}
           </Typography>
 
           <Grid container spacing={3}>
-            {/* عنوان عربي */}
-            <Grid  xs={12} md={6}>
+            {/* ========== العنوان باللغتين ========== */}
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
+                required
                 label={t("tripTitleArabic")}
                 name="title_ar"
                 value={formData.title_ar}
                 onChange={handleChange}
               />
             </Grid>
-
-            {/* عنوان إنجليزي */}
-            <Grid  xs={12} md={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
+                required
                 label={t("tripTitleEnglish")}
                 name="title_en"
                 value={formData.title_en}
@@ -247,8 +358,8 @@ const CreateTrip = () => {
               />
             </Grid>
 
-            {/* وصف قصير عربي */}
-            <Grid  xs={12}>
+            {/* ========== الوصف القصير ========== */}
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -259,9 +370,7 @@ const CreateTrip = () => {
                 onChange={handleChange}
               />
             </Grid>
-
-            {/* وصف قصير إنجليزي */}
-            <Grid  xs={12}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -273,8 +382,8 @@ const CreateTrip = () => {
               />
             </Grid>
 
-            {/* وصف عربي */}
-            <Grid  xs={12}>
+            {/* ========== الوصف الطويل ========== */}
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -285,9 +394,7 @@ const CreateTrip = () => {
                 onChange={handleChange}
               />
             </Grid>
-
-            {/* وصف إنجليزي */}
-            <Grid  xs={12}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 multiline
@@ -299,20 +406,56 @@ const CreateTrip = () => {
               />
             </Grid>
 
-            {/* السعر */}
-            <Grid  xs={12} md={4}>
+            {/* ========== التصنيف والوجهة ========== */}
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth required>
+                <InputLabel>{t("category")}</InputLabel>
+                <Select
+                  name="category_id"
+                  value={formData.category_id}
+                  label={t("category")}
+                  onChange={handleChange}
+                >
+                  {categories.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name_ar} / {cat.name_en}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth required>
+                <InputLabel>{t("destination")}</InputLabel>
+                <Select
+                  name="destination_id"
+                  value={formData.destination_id}
+                  label={t("destination")}
+                  onChange={handleChange}
+                >
+                  {destinations.map((dest) => (
+                    <MenuItem key={dest.id} value={dest.id}>
+                      {dest.name_ar} / {dest.name_en}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* ========== السعر والخصم والعملة ========== */}
+            <Grid item xs={12} md={4}>
               <TextField
                 fullWidth
+                required
                 type="number"
                 label={t("price")}
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
+                inputProps={{ min: 0 }}
               />
             </Grid>
-
-            {/* سعر الخصم */}
-            <Grid  xs={12} md={4}>
+            <Grid item xs={12} md={4}>
               <TextField
                 fullWidth
                 type="number"
@@ -320,11 +463,10 @@ const CreateTrip = () => {
                 name="discount_price"
                 value={formData.discount_price}
                 onChange={handleChange}
+                inputProps={{ min: 0 }}
               />
             </Grid>
-
-            {/* العملة */}
-            <Grid  xs={12} md={4}>
+            <Grid item xs={12} md={4}>
               <TextField
                 select
                 fullWidth
@@ -338,33 +480,160 @@ const CreateTrip = () => {
               </TextField>
             </Grid>
 
-            {/* مدة الرحلة */}
-            <Grid  xs={12} md={6}>
+            {/* ========== المدة وعدد المشاركين ========== */}
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
+                required
                 type="number"
                 label={t("tripDuration")}
                 name="duration_days"
                 value={formData.duration_days}
                 onChange={handleChange}
+                inputProps={{ min: 1 }}
               />
             </Grid>
-
-            {/* عدد المشاركين */}
-            <Grid xs={12} md={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
+                required
                 type="number"
                 label={t("maxParticipants")}
                 name="max_participants"
                 value={formData.max_participants}
                 onChange={handleChange}
+                inputProps={{ min: 1 }}
               />
             </Grid>
 
-             
-                {/* status */}
-            <Grid  xs={12} md={4}>
+            {/* ========== التواريخ ========== */}
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                required
+                type="date"
+                label={t("startDate")}
+                name="start_date"
+                value={formData.start_date}
+                onChange={handleChange}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                required
+                type="date"
+                label={t("endDate")}
+                name="end_date"
+                value={formData.end_date}
+                onChange={handleChange}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
+            {/* ========== نقطة الانطلاق ========== */}
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label={t("departureLocationAr")}
+                name="departure_location_ar"
+                value={formData.departure_location_ar}
+                onChange={handleChange}
+                placeholder="مثال: دمشق - ساحة الأمويين"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label={t("departureLocationEn")}
+                name="departure_location_en"
+                value={formData.departure_location_en}
+                onChange={handleChange}
+                placeholder="Ex: Damascus - Umayyad Square"
+              />
+            </Grid>
+
+            {/* ========== الخدمات المشمولة ========== */}
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label={t("includedServicesAr")}
+                name="included_services_ar"
+                value={formData.included_services_ar}
+                onChange={handleChange}
+                placeholder="مثال: النقل، الإقامة، الوجبات"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label={t("includedServicesEn")}
+                name="included_services_en"
+                value={formData.included_services_en}
+                onChange={handleChange}
+                placeholder="Ex: Transport, Accommodation, Meals"
+              />
+            </Grid>
+
+            {/* ========== الخدمات غير المشمولة ========== */}
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label={t("excludedServicesAr")}
+                name="excluded_services_ar"
+                value={formData.excluded_services_ar}
+                onChange={handleChange}
+                placeholder="مثال: المشتريات الشخصية"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label={t("excludedServicesEn")}
+                name="excluded_services_en"
+                value={formData.excluded_services_en}
+                onChange={handleChange}
+                placeholder="Ex: Personal purchases"
+              />
+            </Grid>
+
+            {/* ========== سياسة الإلغاء ========== */}
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={2}
+                label={t("cancellationPolicyAr")}
+                name="cancellation_policy_ar"
+                value={formData.cancellation_policy_ar}
+                onChange={handleChange}
+                placeholder="مثال: إلغاء مجاني قبل 7 أيام"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={2}
+                label={t("cancellationPolicyEn")}
+                name="cancellation_policy_en"
+                value={formData.cancellation_policy_en}
+                onChange={handleChange}
+                placeholder="Ex: Free cancellation 7 days before"
+              />
+            </Grid>
+
+            {/* ========== الحالة والمميزة ========== */}
+            <Grid item xs={12} md={4}>
               <TextField
                 select
                 fullWidth
@@ -377,10 +646,7 @@ const CreateTrip = () => {
                 <MenuItem value="draft">{t("draft")}</MenuItem>
               </TextField>
             </Grid>
-
-             
-            {/* الرحلة المميزة */}
-            <Grid  xs={12}>
+            <Grid item xs={12} md={8} sx={{ display: "flex", alignItems: "center" }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -393,26 +659,219 @@ const CreateTrip = () => {
               />
             </Grid>
 
-            {/* زر الحفظ */}
-            <Grid  xs={12}>
+            {/* ============================================================ */}
+            {/* 🌟 القسم الأهم: البرنامج اليومي (Programs) */}
+            {/* ============================================================ */}
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  p: 3,
+                  border: "2px dashed #4286ae",
+                  borderRadius: 3,
+                  mt: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 2,
+                  }}
+                >
+                  <Typography variant="h6" color="#4286ae" fontWeight="bold">
+                    📅 {t("dailyProgram")} ({programs.length} {t("days")})
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={addDay}
+                    sx={{ borderRadius: 3 }}
+                  >
+                    {t("addDay")}
+                  </Button>
+                </Box>
+
+                {programs.length === 0 && (
+                  <Alert severity="info">
+                    اضغط على زر "إضافة يوم" لبدء بناء برنامج الرحلة
+                  </Alert>
+                )}
+
+                {programs.map((program, index) => (
+                  <Card
+                    key={index}
+                    sx={{ mb: 2, p: 2, border: "1px solid #e0e0e0" }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mb: 2,
+                        bgcolor: "#4286ae",
+                        color: "white",
+                        p: 1,
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Typography fontWeight="bold">
+                        اليوم {program.day_number}
+                      </Typography>
+                      <IconButton
+                        color="inherit"
+                        onClick={() => removeDay(index)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          required
+                          size="small"
+                          label="عنوان اليوم (عربي)"
+                          value={program.title_ar}
+                          onChange={(e) =>
+                            handleProgramChange(
+                              index,
+                              "title_ar",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          required
+                          size="small"
+                          label="Day Title (English)"
+                          value={program.title_en}
+                          onChange={(e) =>
+                            handleProgramChange(
+                              index,
+                              "title_en",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={2}
+                          size="small"
+                          label="وصف اليوم (عربي)"
+                          value={program.description_ar}
+                          onChange={(e) =>
+                            handleProgramChange(
+                              index,
+                              "description_ar",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={2}
+                          size="small"
+                          label="Day Description (English)"
+                          value={program.description_en}
+                          onChange={(e) =>
+                            handleProgramChange(
+                              index,
+                              "description_en",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Grid>
+
+                      {/* الوجبات */}
+                      <Grid item xs={12}>
+                        <Typography variant="subtitle2" gutterBottom>
+                          🍽️ الوجبات المشمولة:
+                        </Typography>
+                        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={program.meals_included.breakfast}
+                                onChange={() =>
+                                  handleMealChange(index, "breakfast")
+                                }
+                              />
+                            }
+                            label="🌅 فطور"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={program.meals_included.lunch}
+                                onChange={() =>
+                                  handleMealChange(index, "lunch")
+                                }
+                              />
+                            }
+                            label="☀️ غداء"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={program.meals_included.dinner}
+                                onChange={() =>
+                                  handleMealChange(index, "dinner")
+                                }
+                              />
+                            }
+                            label="🌙 عشاء"
+                          />
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Card>
+                ))}
+              </Box>
+            </Grid>
+
+            {/* ========== زر الحفظ ========== */}
+            <Grid item xs={12}>
               <Button
                 variant="contained"
                 size="large"
                 onClick={handleSubmit}
                 disabled={loading}
-                sx={{
-                  borderRadius: 3,
-                  px: 5,
-                  py: 1.5,
-                }}
+                sx={{ borderRadius: 3, px: 5, py: 1.5 }}
               >
                 {loading ? t("saving") : t("createTrip")}
               </Button>
             </Grid>
-
           </Grid>
         </CardContent>
       </Card>
+
+      {/* ✅ Snackbar للتنبيهات */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          severity={snackbar.severity}
+          variant="filled"
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

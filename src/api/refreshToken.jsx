@@ -1,43 +1,65 @@
+// src/api/refreshToken.js
 import axios from "axios";
 
-const api = axios.create({ baseURL: "/api" });
+const api = axios.create({
+  baseURL: "/api",
+  timeout: 15000,
+  headers: { "Content-Type": "application/json" },
+});
+
+let isRefreshing = false;
+let refreshPromise = null;
 
 const refreshAccessToken = async () => {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) {
-    console.log("No refresh token available for refresh.");
-    return null;
-  }
+  if (isRefreshing) return refreshPromise;
 
-  try {
-    const response = await axios.post("/api/auth/refresh-token", {
-      refresh_token: refreshToken,
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) return null;
+
+  isRefreshing = true;
+
+  refreshPromise = axios
+    .post("/api/auth/refresh-token", { refresh_token: refreshToken })
+    .then((response) => {
+      const newAccessToken =
+        response.data?.data?.access_token ?? response.data?.access_token;
+      const newRefreshToken =
+        response.data?.data?.refresh_token ?? response.data?.refresh_token;
+
+      if (!newAccessToken) return null;
+
+      localStorage.setItem("accessToken", newAccessToken);
+      if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
+
+      return newAccessToken;
+    })
+    .catch(() => null)
+    .finally(() => {
+      isRefreshing = false;
+      refreshPromise = null;
     });
 
-    const newAccessToken = response.data?.data?.access_token ?? response.data?.access_token;
-
-    if (!newAccessToken) {
-      console.log("Refresh response did not contain a new access token.");
-      return null;
-    }
-
-    localStorage.setItem("accessToken", newAccessToken);
-    return newAccessToken;
-  } catch (err) {
-    console.log("Refresh failed:", err.response?.data || err.message);
-    console.log("Refresh Error:", err.response?.status);
-    return null;
-  }
+  return refreshPromise;
 };
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+const forceLogout = () => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("user");
+  window.location.href = "/?reason=session_expired";
+};
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
   (response) => response,
@@ -47,21 +69,19 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       originalRequest &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/auth/refresh-token") &&
+      !originalRequest.url.includes("/auth/login")
     ) {
       originalRequest._retry = true;
-
       const newAccessToken = await refreshAccessToken();
 
       if (newAccessToken) {
-        originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       }
 
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/";
+      forceLogout();
     }
 
     return Promise.reject(error);

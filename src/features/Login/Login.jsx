@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import {useAuth} from "../../contexts/AuthContext";
 
 //Style 
 import './Login.css';
@@ -16,44 +16,27 @@ import api from "../../api/refreshToken";
 import { useTranslation } from "react-i18next";
 //////////
 
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
- 
+  const { login } = useAuth();
   const navigate = useNavigate();
   
   const Submit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await api.post("/auth/login", {
-        email,
-        password,
-      });
-      console.log(res.data)
-   
-    // تخزين التوكن
- const token = res.data.data.access_token ;
- localStorage.setItem("accessToken", token);
+  const result = await login(email, password);
 
-// // احفظ الـ refresh token ← هذا هو الجديد
-const refreshToken = res.data.data.refresh_token ;
-localStorage.setItem("refreshToken", refreshToken);
-console.log( "RefreshToken"+ refreshToken);
-//  
+  if (result.success) {
+    navigate(result.user.role === "admin" ? "/dashboard" : "/Bookings");
+  } else {
+    console.log(result.message);
+  }
 
-console.log('accessToken'+  token);
-
-navigate("/dashboard");
-} catch (err) {
-  console.log(err);
-} finally {
   setLoading(false);
-}
 };
 
 

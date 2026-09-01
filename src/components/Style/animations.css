@@ -1,0 +1,57 @@
+/* ============================================
+    مكتبة الحركات - بسيطة وقابلة لإعادة الاستخدام
+   ============================================ */
+
+/* 1) ظهور مع صعود لأعلى */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 2) ظهور تدريجي بسيط */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 3) تكبير من المركز */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* 4) انزلاق من الجانب */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* 5) نبض ناعم (للتنبيهات) */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+/* ---------- كلاسات جاهزة للاستخدام ---------- */
+.anim-fade-up { animation: fadeInUp 0.5s ease both; }
+.anim-fade    { animation: fadeIn 0.4s ease both; }
+.anim-scale   { animation: scaleIn 0.35s ease both; }
+.anim-slide   { animation: slideIn 0.5s ease both; }
+.anim-pulse   { animation: softPulse 2s infinite; }
+
+/* تأخيرات متدرجة (لظهور البطاقات واحدة تلو الأخرى) */
+.anim-delay-1 { animation-delay: 0.08s; }
+.anim-delay-2 { animation-delay: 0.16s; }
+.anim-delay-3 { animation-delay: 0.24s; }
+.anim-delay-4 { animation-delay: 0.32s; }
+.anim-delay-5 { animation-delay: 0.40s; }
+.anim-delay-6 { animation-delay: 0.48s; }
+
+/* رفع ناعم عند مرور الماوس */
+.hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}

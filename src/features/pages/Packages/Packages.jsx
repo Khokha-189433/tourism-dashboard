@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+
 import api from "../../../api/refreshToken";
 import Deletepackage from "./CUD_Packages/DeletePackages";
+
 import {
   Box,
   Button,
@@ -12,17 +13,17 @@ import {
   CircularProgress,
   IconButton,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
   TextField,
-  InputAdornment,
   Tooltip,
-  Stack,
+  Typography,
+  InputAdornment,
 } from "@mui/material";
 
 import {
@@ -30,7 +31,6 @@ import {
   Search,
   Visibility,
   Edit,
-  Delete,
   Star,
 } from "@mui/icons-material";
 
@@ -38,51 +38,33 @@ export default function Packages() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  // =====================================================
-  // Language
-  // =====================================================
-
   const isArabic = i18n.language === "ar";
-
-  // =====================================================
-  // State
-  // =====================================================
 
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
-  // =====================================================
-  // Get Packages
-  // =====================================================
-
+  // =========================
+  // Fetch Packages
+  // =========================
   useEffect(() => {
     const getPackages = async () => {
       try {
         setLoading(true);
 
-        const response = await api.get("/packages");
+        const { data } = await api.get("/packages");
 
-        console.log("Packages Response:", response.data);
-
-        // حسب شكل الـ API
         const packagesData =
-          response.data?.data ??
-          response.data?.packages ??
-          response.data ??
+          data?.data ??
+          data?.packages ??
+          data ??
           [];
 
         setPackages(
-          Array.isArray(packagesData)
-            ? packagesData
-            : []
+          Array.isArray(packagesData) ? packagesData : []
         );
       } catch (error) {
-        console.error(
-          "Error fetching packages:",
-          error
-        );
-
+        console.error("Error fetching packages:", error);
         setPackages([]);
       } finally {
         setLoading(false);
@@ -92,168 +74,115 @@ export default function Packages() {
     getPackages();
   }, []);
 
-  // =====================================================
+  // =========================
   // Search
-  // =====================================================
-
+  // =========================
   const filteredPackages = packages.filter((item) => {
     const title = isArabic
       ? item.title_ar
       : item.title_en;
 
-    const searchValue = search
-      .toLowerCase()
-      .trim();
-
     return title
       ?.toLowerCase()
-      .includes(searchValue);
+      .includes(search.trim().toLowerCase());
   });
 
-  // =====================================================
-  // Delete Package
-  // =====================================================
-
-  const handleDelete =  (id) => {
-    console.log(id)
-      // حذف العنصر مباشرة من الجدول
-      setPackages((prev) =>
-        prev.filter((item) => item.id !== id)
-      );
-  };
-
-  // =====================================================
-  // Format Price
-  // =====================================================
-
-  const formatPrice = (price, currency) => {
-    if (
-      price === undefined ||
-      price === null
-    ) {
-      return "-";
-    }
-
-    return `${Number(price).toLocaleString()} ${
-      currency || ""
-    }`;
-  };
-
-  // =====================================================
-  // Get Thumbnail
-  // =====================================================
-
-  const getThumbnail = (item) => {
-    return (
-      item.thumbnail ||
-      item.image ||
-      item.images?.[0]?.image_url ||
-      item.images?.[0]?.url ||
-      null
+  // =========================
+  // Delete
+  // =========================
+  const handleDelete = (id) => {
+    setPackages((prev) =>
+      prev.filter((item) => item.id !== id)
     );
   };
 
-  // =====================================================
-  // Table Header
-  // =====================================================
+  // =========================
+  // Helpers
+  // =========================
+  const formatPrice = (price, currency) => {
+    if (price === undefined || price === null) {
+      return "-";
+    }
 
-  const renderTableHeader = () => {
-    const headers = [
-      {
-        key: "thumbnail",
-        label: t("packages.thumbnail"),
-        width: "11%",
-      },
-      {
-        key: "name",
-        label: t("packages.name"),
-        width: "21%",
-      },
-      {
-        key: "price",
-        label: t("packages.price"),
-        width: "16%",
-      },
-      {
-        key: "duration",
-        label: t("packages.duration"),
-        width: "12%",
-      },
-      {
-        key: "seats",
-        label: t("packages.availableSeats"),
-        width: "13%",
-      },
-      {
-        key: "status",
-        label: t("packages.status"),
-        width: "11%",
-      },
-      {
-        key: "actions",
-        label: t("packages.actions"),
-        width: "16%",
-      },
-    ];
+    return `${Number(price).toLocaleString()} ${currency || ""}`;
+  };
 
-    // في العربية نعكس ترتيب الأعمدة
-    const orderedHeaders = isArabic
-      ? [...headers].reverse()
-      : headers;
+  const getThumbnail = (item) =>
+    item.thumbnail ||
+    item.image ||
+    item.images?.[0]?.image_url ||
+    item.images?.[0]?.url ||
+    null;
 
-    return orderedHeaders.map((header) => (
+  const getTitle = (item) =>
+    isArabic ? item.title_ar : item.title_en;
+
+  const getAvailableSeats = (item) =>
+    item.available_seats ??
+    item.max_participants ??
+    "-";
+
+  // =========================
+  // Table Columns
+  // =========================
+  const columnOrder = [
+    "thumbnail",
+    "name",
+    "price",
+    "duration",
+    "seats",
+    "status",
+    "actions",
+  ];
+
+  const headers = [
+    ["thumbnail", t("packages.thumbnail"), "11%"],
+    ["name", t("packages.name"), "21%"],
+    ["price", t("packages.price"), "16%"],
+    ["duration", t("packages.duration"), "12%"],
+    ["seats", t("packages.availableSeats"), "13%"],
+    ["status", t("packages.status"), "11%"],
+    ["actions", t("packages.actions"), "16%"],
+  ];
+
+  const orderedHeaders = isArabic
+    ? [...headers].reverse()
+    : headers;
+
+  const orderedColumns = isArabic
+    ? [...columnOrder].reverse()
+    : columnOrder;
+
+  // =========================
+  // Render Table Header
+  // =========================
+  const renderTableHeader = () =>
+    orderedHeaders.map(([key, label, width]) => (
       <TableCell
-        key={header.key}
+        key={key}
         align="center"
         sx={{
-          width: header.width,
+          width,
           fontWeight: 700,
           whiteSpace: "nowrap",
         }}
       >
-        {header.label}
+        {label}
       </TableCell>
     ));
-  };
 
-  // =====================================================
-  // Table Row
-  // =====================================================
-
+  // =========================
+  // Render Table Row
+  // =========================
   const renderTableRow = (item) => {
-    // =====================================================
-    // Package Title
-    // =====================================================
-
-    const title = isArabic
-      ? item.title_ar
-      : item.title_en;
-
-    // =====================================================
-    // Available Seats
-    // =====================================================
-
-    const availableSeats =
-      item.available_seats ??
-      item.max_participants ??
-      "-";
-
-    // =====================================================
-    // Thumbnail
-    // =====================================================
-
+    const title = getTitle(item);
     const thumbnail = getThumbnail(item);
-
-    // =====================================================
-    // Individual Columns
-    // =====================================================
+    const availableSeats = getAvailableSeats(item);
 
     const columns = {
+      // Image
       thumbnail: (
-        <TableCell
-          key="thumbnail"
-          align="center"
-        >
+        <TableCell key="thumbnail" align="center">
           {thumbnail ? (
             <Box
               component="img"
@@ -274,8 +203,7 @@ export default function Packages() {
                 width: 70,
                 height: 50,
                 borderRadius: 2,
-                backgroundColor:
-                  "action.hover",
+                bgcolor: "action.hover",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -293,15 +221,9 @@ export default function Packages() {
         </TableCell>
       ),
 
-      // ===================================================
       // Name
-      // ===================================================
-
       name: (
-        <TableCell
-          key="name"
-          align="center"
-        >
+        <TableCell key="name" align="center">
           <Stack
             direction="row"
             spacing={0.5}
@@ -309,15 +231,14 @@ export default function Packages() {
               minWidth: 0,
               width: "100%",
               alignItems:"center" ,
-              justifyContent:"center"
-            }}
+              justifyContent:"center"  }}
           >
             <Typography
               fontWeight={600}
+              noWrap
               sx={{
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
                 maxWidth: "100%",
               }}
             >
@@ -325,16 +246,11 @@ export default function Packages() {
             </Typography>
 
             {item.is_featured && (
-              <Tooltip
-                title={t(
-                  "packages.featured"
-                )}
-              >
+              <Tooltip title={t("packages.featured")}>
                 <Star
                   fontSize="small"
                   sx={{
-                    color:
-                      "warning.main",
+                    color: "warning.main",
                     flexShrink: 0,
                   }}
                 />
@@ -344,31 +260,16 @@ export default function Packages() {
         </TableCell>
       ),
 
-      // ===================================================
       // Price
-      // ===================================================
-
       price: (
-        <TableCell
-          key="price"
-          align="center"
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+        <TableCell key="price" align="center">
+          <Stack  sx={{alignItems:"center"}}>
             {item.discount_price ? (
               <>
                 <Typography
                   fontWeight={700}
                   color="primary"
-                  sx={{
-                    whiteSpace: "nowrap",
-                  }}
+                  noWrap
                 >
                   {formatPrice(
                     item.discount_price,
@@ -378,12 +279,10 @@ export default function Packages() {
 
                 <Typography
                   variant="caption"
+                  color="text.secondary"
+                  noWrap
                   sx={{
-                    textDecoration:
-                      "line-through",
-                    color:
-                      "text.secondary",
-                    whiteSpace: "nowrap",
+                    textDecoration: "line-through",
                   }}
                 >
                   {formatPrice(
@@ -393,51 +292,30 @@ export default function Packages() {
                 </Typography>
               </>
             ) : (
-              <Typography
-                fontWeight={600}
-                sx={{
-                  whiteSpace: "nowrap",
-                }}
-              >
+              <Typography fontWeight={600} noWrap>
                 {formatPrice(
                   item.price,
                   item.currency
                 )}
               </Typography>
             )}
-          </Box>
+          </Stack>
         </TableCell>
       ),
 
-      // ===================================================
       // Duration
-      // ===================================================
-
       duration: (
-        <TableCell
-          key="duration"
-          align="center"
-        >
-          <Typography
-            sx={{
-              whiteSpace: "nowrap",
-            }}
-          >
+        <TableCell key="duration" align="center">
+          <Typography noWrap>
             {item.duration_days ?? "-"}{" "}
             {t("packages.days")}
           </Typography>
         </TableCell>
       ),
 
-      // ===================================================
-      // Available Seats
-      // ===================================================
-
+      // Seats
       seats: (
-        <TableCell
-          key="seats"
-          align="center"
-        >
+        <TableCell key="seats" align="center">
           <Chip
             label={availableSeats}
             size="small"
@@ -454,21 +332,13 @@ export default function Packages() {
         </TableCell>
       ),
 
-      // ===================================================
       // Status
-      // ===================================================
-
       status: (
-        <TableCell
-          key="status"
-          align="center"
-        >
+        <TableCell key="status" align="center">
           <Chip
             label={
               item.status === "published"
-                ? t(
-                    "packages.published"
-                  )
+                ? t("packages.published")
                 : item.status || "-"
             }
             size="small"
@@ -485,108 +355,43 @@ export default function Packages() {
         </TableCell>
       ),
 
-      // ===================================================
       // Actions
-      // ===================================================
-
       actions: (
-        <TableCell
-          key="actions"
-          align="center"
-        >
+        <TableCell key="actions" align="center">
           <Stack
             direction="row"
             spacing={0.5}
-            sx={{
-            whiteSpace: "nowrap",
-            alignItems:"center" ,
-            justifyContent:"center"
-            }}
+            sx={{ whiteSpace: "nowrap" ,  justifyContent:"center" , alignItems:"center" }}
           >
-            {/* View */}
+            <IconButton
+              size="small"
+              color="primary"
+              component={Link}
+              to={`/Package/${item.id}`}
+            >
+              <Visibility />
+            </IconButton>
 
-        
-              <IconButton
-                size="small"
-                color="primary"
-                component={Link}
-                to={`/Package/${item.id}`}
-              >
-                <Visibility />
-              </IconButton>
-        
-
-            {/* Edit */}
-
-              <IconButton
-                size="small"
-                color="warning"
-                 onClick={() =>
+            <IconButton
+              size="small"
+              color="warning"
+              onClick={() =>
                 navigate(
-                `/Packages/EditPackage/${item.id}`
-                 )
-                 }
-                
-              >
-                <Edit />
-              </IconButton>
-       
+                  `/Packages/EditPackage/${item.id}`
+                )
+              }
+            >
+              <Edit />
+            </IconButton>
 
-            {/* Delete */}
-           {/*  اسم الملف الخاص بحذف الفندق مع ارسال ال id */}
-           <Deletepackage  packageId={item.id} onDeleted={handleDelete} />
-   
-
-
-
-              {/* 
-                   <IconButton
-                        color="primary"
-                        component={Link}
-                        to={`/Transport/${transport.id}`}
-                      >
-                        <VisibilityIcon />
-                      </IconButton>
-
-
-                      {/* Edit */}
-
-                      {/* <IconButton
-                        color="warning"
-                        component={Link}
-                        to={`/Transports/EditTransport/${transport.id}`}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      */}
-                     {/*  اسم الملف الخاص بحذف التصنيف مع ارسال ال id */}
-                   {/* <DeleteTransport id={transport.id} onDeleted={handleTransDelete} /> */}
-              
-              
-              
-      
+            <Deletepackage
+              packageId={item.id}
+              onDeleted={handleDelete}
+            />
           </Stack>
         </TableCell>
       ),
     };
-
-    // =====================================================
-    // ترتيب الأعمدة حسب اللغة
-    // =====================================================
-
-    const columnOrder = [
-      "thumbnail",
-      "name",
-      "price",
-      "duration",
-      "seats",
-      "status",
-      "actions",
-    ];
-
-    const orderedColumns = isArabic
-      ? [...columnOrder].reverse()
-      : columnOrder;
 
     return (
       <TableRow
@@ -594,7 +399,6 @@ export default function Packages() {
         hover
         sx={{
           height: 80,
-
           "&:last-child td, &:last-child th": {
             border: 0,
           },
@@ -607,10 +411,9 @@ export default function Packages() {
     );
   };
 
-  // =====================================================
+  // =========================
   // Loading
-  // =====================================================
-
+  // =========================
   if (loading) {
     return (
       <Box
@@ -626,28 +429,18 @@ export default function Packages() {
     );
   }
 
-  // =====================================================
+  // =========================
   // UI
-  // =====================================================
-
+  // =========================
   return (
     <Box
       sx={{
         p: 3,
-
-        // RTL / LTR
-        direction: isArabic
-          ? "rtl"
-          : "ltr",
-
+        direction: isArabic ? "rtl" : "ltr",
         width: "100%",
-        maxWidth: "100%",
       }}
     >
-      {/* =================================================
-          Header
-      ================================================= */}
-
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -658,38 +451,25 @@ export default function Packages() {
           flexWrap: "wrap",
         }}
       >
-        {/* Title */}
-
         <Box>
-          <Typography
-            variant="h5"
-            fontWeight={700}
-          >
+          <Typography variant="h5" fontWeight={700}>
             {t("packages.title")}
           </Typography>
 
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{
-              mt: 0.5,
-            }}
+            sx={{ mt: 0.5 }}
           >
-            {t(
-              "packages.subtitle"
-            )}
+            {t("packages.subtitle")}
           </Typography>
         </Box>
-
-        {/* Add Package */}
 
         <Button
           variant="contained"
           startIcon={<Add />}
           onClick={() =>
-            navigate(
-              "/Packages/CreatePackage"
-            )
+            navigate("/Packages/CreatePackage")
           }
           sx={{
             borderRadius: 2,
@@ -697,16 +477,11 @@ export default function Packages() {
             fontWeight: 600,
           }}
         >
-          {t(
-            "packages.addPackage"
-          )}
+          {t("packages.addPackage")}
         </Button>
       </Box>
 
-      {/* =================================================
-          Search
-      ================================================= */}
-
+      {/* Search */}
       <Card
         sx={{
           p: 2,
@@ -721,25 +496,20 @@ export default function Packages() {
           onChange={(e) =>
             setSearch(e.target.value)
           }
-          placeholder={t(
-            "packages.search"
-          )}
-        slotProps={{
-        input: {
-        startAdornment: (
-            <InputAdornment position="start">
-            <Search />
-            </InputAdornment>
-          ),
-          },
-        }}
+          placeholder={t("packages.search")}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            },
+          }}
         />
       </Card>
 
-      {/* =================================================
-          Table
-      ================================================= */}
-
+      {/* Table */}
       <TableContainer
         component={Paper}
         sx={{
@@ -751,10 +521,7 @@ export default function Packages() {
         <Table
           sx={{
             minWidth: 1100,
-
-            // تثبيت أحجام الأعمدة
             tableLayout: "fixed",
-
             width: "100%",
 
             "& .MuiTableCell-root": {
@@ -763,64 +530,37 @@ export default function Packages() {
               px: 1.5,
             },
 
-            "& .MuiTableHead-root .MuiTableCell-root":
-              {
-                fontWeight: 700,
-                whiteSpace: "nowrap",
-              },
+            "& .MuiTableHead-root .MuiTableCell-root": {
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+            },
           }}
         >
-          {/* =================================================
-              Table Head
-          ================================================= */}
-
           <TableHead>
             <TableRow
               sx={{
-                backgroundColor:
-                  "action.hover",
+                bgcolor: "action.hover",
               }}
             >
               {renderTableHeader()}
             </TableRow>
           </TableHead>
 
-          {/* =================================================
-              Table Body
-          ================================================= */}
-
           <TableBody>
             {filteredPackages.length === 0 ? (
-              /* =============================================
-                 No Packages
-              ============================================= */
-
               <TableRow>
                 <TableCell
                   colSpan={7}
                   align="center"
-                  sx={{
-                    py: 6,
-                  }}
+                  sx={{ py: 6 }}
                 >
-                  <Typography
-                    color="text.secondary"
-                  >
-                    {t(
-                      "packages.noPackages"
-                    )}
+                  <Typography color="text.secondary">
+                    {t("packages.noPackages")}
                   </Typography>
                 </TableCell>
               </TableRow>
             ) : (
-              /* =============================================
-                 Packages
-              ============================================= */
-
-              filteredPackages.map(
-                (item) =>
-                  renderTableRow(item)
-              )
+              filteredPackages.map(renderTableRow)
             )}
           </TableBody>
         </Table>

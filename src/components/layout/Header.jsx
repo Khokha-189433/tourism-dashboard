@@ -19,7 +19,7 @@ import Brightness4OutlinedIcon from "@mui/icons-material/Brightness4Outlined";
 import Brightness7OutlinedIcon from "@mui/icons-material/Brightness7Outlined";
 import Person2Outlined from "@mui/icons-material/Person2Outlined";
 import LanguageIcon from "@mui/icons-material/Language";
-
+import BeenhereIcon from '@mui/icons-material/Beenhere';
 // المكونات الخاصة بالمشروع
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";

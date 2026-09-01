@@ -416,7 +416,7 @@ return (
 
           <Divider sx={{ mb: 3 , mx: 3 }} />
 
-          <Typography color="text.secondary" lineHeight={2}>
+          <Typography color="text.secondary" sx={{lineHeight: 2 }}  >
             {i18n.language === "ar"
               ? hotel.description_ar || hotel.description_en
               : hotel.description_en || hotel.description_ar}
