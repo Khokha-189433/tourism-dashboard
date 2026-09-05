@@ -15,7 +15,7 @@ import Users from "./features/pages/Users/users";
 import Header from "./components/layout/Header";
 import './features/Style/AppCss.css';
 import ColorModeContext from './contexts/ColorModeContext';
-import User from "./features/pages/Users/User/User";
+import User from "./features/pages/Users/User";
 ///////////////////////////////////////
 import Trips from "./features/pages/Trips/Trips";
 import CreateTrip from "./features/pages/Trips/CUDTrip/CreateTrip"
@@ -63,6 +63,8 @@ import Payment from "./features/pages/Payments/Payment";
 import Reports from "./features/pages/Reports/Reports";
 ///////////////////////////
 import AuditLogs from "./features/pages/AuditLogs/AuditLogs";
+///////////////////////////
+import Profile from "./features/pages/Profile/Profile";
 function App() {
   //////////Translate////////////
     const { i18n } = useTranslation();
@@ -107,7 +109,7 @@ function App() {
                   <Routes>
             
             <Route path="/" element={<Login />} />
-            <Route path="/Trip/:tripId" element={<Trip />} />
+           
 
             {/*   الصفحات المحمية (تستخدم Header كـ Layout) */}
             <Route element={<Header />}>
@@ -131,6 +133,7 @@ function App() {
               <Route path="/Trips" element={
                 <ProtectedRoute allowedRoles={["admin"]}><Trips /></ProtectedRoute>
               } />
+               <Route path="/Trip/:tripId" element={<Trip />} />
               <Route path="/Trips/CreateTrip" element={
                 <ProtectedRoute allowedRoles={["admin"]}><CreateTrip /></ProtectedRoute>
               } />
@@ -246,7 +249,7 @@ function App() {
 
               <Route path="/Payment/:PaymentId" element={
               <ProtectedRoute allowedRoles={["admin"]}>
-                <Payment /> {/* سنبنيه في الخطوة التالية */}
+                <Payment /> 
               </ProtectedRoute>
               } />
                  "   التقارير المالية  (المدير فقط ) "
@@ -261,10 +264,12 @@ function App() {
                   <AuditLogs />
                 </ProtectedRoute>
                  } />
-  
-
-
-
+              {/*  البروفايل (مدير + موظف) */}
+              <Route path="/Profile" element={
+                <ProtectedRoute allowedRoles={["admin", "employee"]}>
+                  <Profile />
+                </ProtectedRoute>
+              } />
             </Route>
 
             {/*  3. المسار الافتراضي (404) - يمنع المسارات العشوائية */}

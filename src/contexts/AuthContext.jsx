@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ============================================================
-  // 4. 🎯 دوال الصلاحيات (تعتمد على user.role)
+  // 4. دوال الصلاحيات (تعتمد على user.role)
   // ============================================================
   const isAdmin = user?.role === "admin";
   const isEmployee = user?.role === "employee";

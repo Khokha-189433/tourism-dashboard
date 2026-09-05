@@ -753,5 +753,15 @@
   "inactive": "معطّل",
   "newEntityCreated": "تم إنشاء كيان جديد",
   "entityDeleted": "تم حذف الكيان",
-  "userAgent":"وكيل المستخدم"
+  "userAgent":"وكيل المستخدم" ,
+  "profile": "الملف الشخصي",
+  "preferredLanguage": "اللغة المفضلة", 
+  "selectLanguage": "اختر اللغة المفضلة",
+  "languageChanged": "تم تغيير اللغة المفضلة بنجاح",
+  "languageChangeError": "حدث خطأ أثناء تغيير اللغة المفضلة",
+   "editProfile": "تعديل الملف الشخصي",
+  "profileUpdated": "تم تحديث الملف الشخصي بنجاح",
+  "reports": "التقارير" ,
+  "auditLogs": "سجل النشاطات"
+  
 }

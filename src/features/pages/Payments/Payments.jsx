@@ -109,7 +109,7 @@ export default function Payments() {
     // 2) تحويل للبحث النصي (حروف صغيرة)
     const searchLower = search.toLowerCase();
     const customerLower = customerName.toLowerCase();
-    const bookingRefLower = (payment.booking_ref || "").toLowerCase();
+    const bookingRefLower = (payment.booking_ref || "").toLLowerCase();
 
     // 3) التحقق من تطابق البحث
     const matchesSearch = 

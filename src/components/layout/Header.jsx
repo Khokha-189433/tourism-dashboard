@@ -1,6 +1,5 @@
 // ==========================
-// استيراد مكتبات React و MUI
-// ==========================
+
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import { Tooltip } from "@mui/material";
@@ -12,14 +11,16 @@ import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-
+import UserMenu from "../UserMenu/UserMenu";  
 // أيقونات MUI
 import MenuIcon from "@mui/icons-material/Menu";
 import Brightness4OutlinedIcon from "@mui/icons-material/Brightness4Outlined";
 import Brightness7OutlinedIcon from "@mui/icons-material/Brightness7Outlined";
 import Person2Outlined from "@mui/icons-material/Person2Outlined";
 import LanguageIcon from "@mui/icons-material/Language";
-import BeenhereIcon from '@mui/icons-material/Beenhere';
+import { useNavigate } from "react-router-dom";
+
+// ==========================
 // المكونات الخاصة بالمشروع
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
@@ -74,7 +75,7 @@ const AppBar = styled(MuiAppBar, {
 // المكون الرئيسي للهيدر
 // ===================================
 export default function Header() {
-
+const navigate = useNavigate();
   // الحصول على دوال الترجمة واللغة الحالية
   const { i18n, t } = useTranslation();
 
@@ -166,10 +167,8 @@ export default function Header() {
                 )}
               </IconButton>
 
-              {/* أيقونة المستخدم */}
-              <IconButton color="inherit">
-                <Person2Outlined />
-              </IconButton>
+            
+
 
               {/* زر تغيير اللغة */}
               <Tooltip title={t("language")}>
@@ -180,7 +179,8 @@ export default function Header() {
                   <LanguageIcon />
                 </IconButton>
               </Tooltip>
-
+                {/* أيقونة المستخدم */}
+              <UserMenu />
             </Stack>
 
           </Toolbar>

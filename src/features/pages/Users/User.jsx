@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import api from "../../../../api/refreshToken";
-import EditUser from "./EditUser";
+import api from "../../../api/refreshToken";
+import EditUser from "./CUD_user/EditUser";
 
 // =========================
 // MUI COMPONENTS
@@ -29,7 +29,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import BadgeIcon from "@mui/icons-material/Badge";
-import NumbersIcon from "@mui/icons-material/Numbers";
+
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 
